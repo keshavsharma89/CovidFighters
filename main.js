@@ -34,7 +34,8 @@ function preload ()
   this.load.image('star', 'assets/star.png');
   this.load.image('bomb', 'assets/bomb.png');
   // this.load.spritesheet('dude', 'assets/bigger-modi.png', { frameWidth: 38, frameHeight: 56 });
-  this.load.spritesheet('dude', 'assets/big-biden.png', { frameWidth: 38, frameHeight: 56 });
+  this.load.spritesheet('dude', 'assets/Bbiden1.png', { frameWidth: 141, frameHeight: 323 });
+  // this.load.spritesheet('dude', 'assets/big-biden.png', { frameWidth: 38, frameHeight: 56 });
 }
 
 function create ()
@@ -77,7 +78,7 @@ function create ()
 
     this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frames: this.anims.generateFrameNumbers('dude', { start: 6, end: 9 }),
         frameRate: 10,
         repeat: -1
     });

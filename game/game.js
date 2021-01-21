@@ -4,7 +4,8 @@ var game = new Phaser.Game(1320, 600, Phaser.CANVAS, 'phaser-example', { preload
 function preload() {
     game.load.image('backgroung', '../assets/Game_background.png');
     //game.load.image('player','assets/sprites/phaser-dude.png');
-    game.load.spritesheet('player', '../assets/bigger-modi.png', 38, 56);
+    // game.load.spritesheet('player', '../assets/bigger-modi.png', 38, 56);
+    game.load.spritesheet('player', '../assets/Bbiden1.png', 140, 323);
 }
 
 var cursors;
@@ -20,16 +21,16 @@ function create() {
     game.world.setBounds(0, 0, 7000, 500);
 
     game.physics.arcade.gravity.y = 100;
-    player = game.add.sprite(200, 400, 'player');
+    player = game.add.sprite(40, 100, 'player');
     game.physics.enable(player, Phaser.Physics.ARCADE);
 
     player.body.bounce.y = 0.2;
     player.body.collideWorldBounds = true;
-    player.body.setSize(38, 56, 4, 16);
+    player.body.setSize(10, 210, 6, 22);
 
-    player.animations.add('left', [0, 1, 2, 3], 10, true);
-    player.animations.add('turn', [4], 20, true);
-    player.animations.add('right', [5, 6, 7, 8], 10, true);
+    player.animations.add('left', [0, 1, 2, 3, 4], 10, true);
+    player.animations.add('turn', [5], 20, true);
+    player.animations.add('right', [6, 7, 8, 9, 10], 10, true);
 
     game.camera.follow(player);
     cursors = game.input.keyboard.createCursorKeys();
