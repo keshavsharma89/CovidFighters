@@ -5,22 +5,23 @@ function preload() {
     game.load.image('backgroung', '../assets/Game_background.png');
     game.load.image('covid', '../assets/covid.png');
     game.load.image('sanitizer','../assets/sanitizer.png');
-    // game.load.spritesheet('player', '../assets/bigger-modi.png', 38, 56);
-    // game.load.spritesheet('player', '../assets/biden1152.png', 127, 190);
     game.load.spritesheet('player', '../assets/modi1152.png', 127, 190);
-    game.load.tilemap('map', '../assets/tiles.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('ground_1x1', '../assets/ground_1x1.png');
-    game.load.image('spray', '../assets/spray_1.png');
+    //game.load.spritesheet('player', '../assets/bigger-modi.png', 38, 56);
+    //game.load.tilemap('map', '../assets/tiles.json', null, Phaser.Tilemap.TILED_JSON);
+    //game.load.image('ground_1x1', '../assets/ground_1x1.png');
+    game.load.image('spray', '../assets/spray.png');
+    game.load.image('vaccine', '../assets/vaccine.png');
 }
 var map;
 var layer;
 var cursors;
-var jumpButton;
+var sprayButton;
 var jumpTimer = 0;
 var facing='';
 var sanitizer;
 var covid;
 var spray;
+var vaccine;
 
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -31,20 +32,20 @@ function create() {
 
     game.physics.arcade.gravity.y = 200;
 
-    map = game.add.tilemap('map');
+    //map = game.add.tilemap('map');
 
-    map.addTilesetImage('ground_1x1');
+    //map.addTilesetImage('ground_1x1');
 
-    layer = map.createLayer('Tile Layer 1');
+    //layer = map.createLayer('Tile Layer 1');
 
     //layer.resizeWorld();
 
-    map.setCollisionBetween(1, 12);
+    //map.setCollisionBetween(1, 34);
 
     player = game.add.sprite(100, 350, 'player');
     game.physics.enable(player, Phaser.Physics.ARCADE);
 
-    player.body.bounce.y = 0.5;
+    player.body.bounce.y = 0.2;
     player.body.collideWorldBounds = true;
     player.body.setSize(38, 200, 4, 16);
     player.body.tilePadding.set(32);
@@ -57,16 +58,31 @@ function create() {
 
     game.camera.follow(player);
     cursors = game.input.keyboard.createCursorKeys();
-    jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    sprayButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-    //Add Senitizer Randomly
     sanitizer = game.add.group();
     sanitizer.enableBody = true;
-    map.createFromObjects('Object Layer 1', 34, 'sanitizer', 0, true, false, sanitizer);
+    for (var i = 1; i < 5; i++)
+    {
+        var s = sanitizer.create(i*600, 150, 'sanitizer');
+        s.body.allowGravity = false;
+    }
+
+    vaccine = game.add.group();
+    vaccine.enableBody = true;
+    for (var i = 1; i < 5; i++)
+    {
+        var s = vaccine.create(i*700, 150, 'vaccine');
+        s.body.allowGravity = false;
+    }
 
     covid = game.add.group();
     covid.enableBody = true;
-    map.createFromObjects('Object Layer 1', 35, 'covid', 0, true, false, covid);
+    for (var i = 1; i < 10; i++)
+    {
+        var c = covid.create(i*900, 350, 'covid');
+        c.body.allowGravity = false;
+    }
 
     spray = game.add.weapon(1, 'spray');
     doSpray();
@@ -116,30 +132,35 @@ function update() {
             facing = 'idle';
         }
     }
-    if (jumpButton.isDown){
+    if (sprayButton.isDown){
               spray.fire();
           }
 
-    if (jumpButton.isDown && player.body.onFloor() && game.time.now > jumpTimer)
+    if (cursors.up.isDown && player.body.onFloor() && game.time.now > jumpTimer)
     {
-        //player.body.velocity.y = -250;
+        player.body.velocity.y = -250;
         jumpTimer = game.time.now + 750;
     }
     game.physics.arcade.overlap(sanitizer, player, sanitizerCollisionHandler, null, this);
+    game.physics.arcade.overlap(vaccine, player, vaccineCollisionHandler, null, this);
     game.physics.arcade.collide(spray.bullets, covid, collisionHandler);
 
+
+}
+function vaccineCollisionHandler(player, vaccine){
+  vaccine.kill();
 }
 function collisionHandler (spray, covid){
     //  When a bullet hits an alien we kill them both
     spray.kill();
     covid.kill();
 }
-function sanitizerCollisionHandler (player, sanitizer) {
+function sanitizerCollisionHandler (player, sanitizer ) {
     //  When a powerUp hits player we change bullet
     sanitizer.kill();
     //powerGain.play();
 
-    spray = game.add.weapon(1, 'spray');
+    spray = game.add.weapon(10, 'spray');
     doSpray();
 }
 
@@ -147,6 +168,6 @@ function render() {
   // game.debug.text(game.time.physicsElapsed, 32, 32);
   // game.debug.body(player);
   // game.debug.bodyInfo(player, 16, 24);
-  //  game.debug.cameraInfo(game.camera, 32, 32);
+  // game.debug.cameraInfo(game.camera, 32, 32);
 
 }
