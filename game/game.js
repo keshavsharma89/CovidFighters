@@ -55,8 +55,8 @@ function create(){
   biden_image.inputEnabled = true;
   modi_image.inputEnabled = true;
 
-  biden_image.animations.play('dance_biden', 10, true);
-  modi_image.animations.play('dance_modi', 10, true);
+  biden_image.animations.play('dance_biden', 30, true);
+  modi_image.animations.play('dance_modi', 7, true);
   biden_image.events.onInputDown.add(selectCharacter);
   modi_image.events.onInputDown.add(selectCharacter);
 
