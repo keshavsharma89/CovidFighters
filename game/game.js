@@ -26,7 +26,7 @@ function create() {
 
     player.body.bounce.y = 0.2;
     player.body.collideWorldBounds = true;
-    player.body.setSize(10, 210, 6, 22);
+    player.body.setSize(10, 210, 5, 22);
 
     player.animations.add('left', [0, 1, 2, 3, 4], 10, true);
     player.animations.add('turn', [5], 20, true);

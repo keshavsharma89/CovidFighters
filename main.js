@@ -34,7 +34,7 @@ function preload ()
   this.load.image('star', 'assets/star.png');
   this.load.image('bomb', 'assets/bomb.png');
   // this.load.spritesheet('dude', 'assets/bigger-modi.png', { frameWidth: 38, frameHeight: 56 });
-  this.load.spritesheet('dude', 'assets/Bbiden1.png', { frameWidth: 141, frameHeight: 323 });
+  this.load.spritesheet('dude', 'assets/biden1152.png', { frameWidth: 127, frameHeight: 190 });
   // this.load.spritesheet('dude', 'assets/big-biden.png', { frameWidth: 38, frameHeight: 56 });
 }
 
