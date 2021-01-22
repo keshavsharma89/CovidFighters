@@ -5,7 +5,9 @@ function preload() {
     game.load.image('backgroung', '../assets/Game_background.png');
     game.load.image('covid', '../assets/covid.png');
     game.load.image('sanitizer','../assets/sanitizer.png');
-    game.load.spritesheet('player', '../assets/bigger-modi.png', 38, 56);
+    // game.load.spritesheet('player', '../assets/bigger-modi.png', 38, 56);
+    // game.load.spritesheet('player', '../assets/biden1152.png', 127, 190);
+    game.load.spritesheet('player', '../assets/modi1152.png', 127, 190);
     game.load.tilemap('map', '../assets/tiles.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('ground_1x1', '../assets/ground_1x1.png');
     game.load.image('spray', '../assets/spray_1.png');
@@ -44,12 +46,12 @@ function create() {
 
     player.body.bounce.y = 0.5;
     player.body.collideWorldBounds = true;
-    player.body.setSize(38, 56, 4, 16);
+    player.body.setSize(38, 200, 4, 16);
     player.body.tilePadding.set(32);
 
-    player.animations.add('left', [0, 1, 2, 3, 4], 10, true);
-    player.animations.add('turn', [5], 20, true);
-    player.animations.add('right', [6, 7, 8, 9, 10], 10, true);
+    player.animations.add('left', [0, 1, 2, 3], 10, true);
+    player.animations.add('turn', [4], 20, true);
+    player.animations.add('right', [5, 6, 7, 8], 10, true);
 
 
 
