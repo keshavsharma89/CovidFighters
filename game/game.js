@@ -1,5 +1,5 @@
 
-var game = new Phaser.Game(1320, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(1340, 550, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
     //preload for player selection starts
@@ -17,14 +17,12 @@ function preload() {
     game.load.image('sanitizer','../assets/sanitizer.png');
     game.load.spritesheet('modi_avatar', '../assets/modi1152.png', 127, 190);
     game.load.spritesheet('biden_avatar', '../assets/biden1152.png', 127, 190);
-    //game.load.spritesheet('player', '../assets/bigger-modi.png', 38, 56);
-    //game.load.tilemap('map', '../assets/tiles.json', null, Phaser.Tilemap.TILED_JSON);
-    //game.load.image('ground_1x1', '../assets/ground_1x1.png');
+    game.load.atlasJSONHash('bat', '../assets/bat.png', '../assets/bat.json');
     game.load.image('spray', '../assets/spray.png');
     game.load.image('vaccine', '../assets/vaccine.png');
+    game.load.image('coronavirus', '../assets/coronavirus.png');
 }
 var map;
-var layer;
 var cursors;
 var player;
 var sprayButton;
@@ -34,6 +32,8 @@ var sanitizer;
 var covid;
 var spray;
 var vaccine;
+var bat;
+var firingTimer = 0;
 var selectedCharacter;
 var start_game;
 var biden_image;
@@ -110,15 +110,6 @@ function startGame(item, pointer) {
 
     game.physics.arcade.gravity.y = 200;
 
-    //map = game.add.tilemap('map');
-
-    //map.addTilesetImage('ground_1x1');
-
-    //layer = map.createLayer('Tile Layer 1');
-
-    //layer.resizeWorld();
-
-    //map.setCollisionBetween(1, 34);
     if(this.selectedCharacter == 'biden')
     {
       player = game.add.sprite(100, 350, 'biden_avatar');
@@ -138,7 +129,8 @@ function startGame(item, pointer) {
     player.animations.add('turn', [4], 20, true);
     player.animations.add('right', [5, 6, 7, 8], 10, true);
 
-
+    createBats();
+    createCoronaVirus();
 
     game.camera.follow(player);
     cursors = game.input.keyboard.createCursorKeys();
@@ -177,9 +169,8 @@ function startGame(item, pointer) {
 function update() {
   if(player)
   {
-
     player.body.velocity.x = 0;
-    game.physics.arcade.collide(player, layer);
+    bat.x -= 1;
       if (cursors.left.isDown)
       {
           player.body.velocity.x = -150;
@@ -220,8 +211,10 @@ function update() {
       }
       if (sprayButton.isDown){
                 spray.fire();
-            }
-
+      }
+      if (game.time.now > firingTimer){
+                spitCoronaVirus();
+      }
       if (cursors.up.isDown && player.body.onFloor() && game.time.now > jumpTimer)
       {
           player.body.velocity.y = -250;
@@ -230,7 +223,6 @@ function update() {
       game.physics.arcade.overlap(sanitizer, player, sanitizerCollisionHandler, null, this);
       game.physics.arcade.overlap(vaccine, player, vaccineCollisionHandler, null, this);
       game.physics.arcade.collide(spray.bullets, covid, collisionHandler);
-
   }
 
 }
