@@ -36,15 +36,20 @@ var spray;
 var vaccine;
 var selectedCharacter;
 var start_game;
-
-
+var biden_image;
+var biden_label;
+var modi_image;
+var modi_label;
+var select_avatar;
 function create(){
+
+  game.physics.startSystem(Phaser.Physics.ARCADE);
   game.add.tileSprite(0, 0, 1320, 600 , 'avatar_bg');
-  let select_avatar = game.add.sprite((game.width /2)-150, 50, 'avatar_select');
-  let biden_image = game.add.sprite((game.width /2)-200, 150, 'biden');
-  let biden_label = game.add.sprite((game.width /2)-200, 400, 'biden_label');
-  let modi_image = game.add.sprite((game.width /2)+150, 150, 'modi');
-  let modi_label = game.add.sprite((game.width /2)+150, 400, 'modi_label');
+  select_avatar = game.add.sprite((game.width /2)-150, 50, 'avatar_select');
+  biden_image = game.add.sprite((game.width /2)-200, 150, 'biden');
+  biden_label = game.add.sprite((game.width /2)-200, 400, 'biden_label');
+  modi_image = game.add.sprite((game.width /2)+150, 150, 'modi');
+  modi_label = game.add.sprite((game.width /2)+150, 400, 'modi_label');
   biden_image.animations.add('dance_biden');
   modi_image.animations.add('dance_modi');
   biden_image.inputEnabled = true;
@@ -55,17 +60,42 @@ function create(){
   biden_image.events.onInputDown.add(selectCharacter);
   modi_image.events.onInputDown.add(selectCharacter);
 
+  game.physics.arcade.enable(biden_image);
+  game.physics.arcade.enable(modi_image);
+
 }
 
 
 function selectCharacter(item, pointer)
 {
     this.selectedCharacter = item.key;
+    this.select_avatar.kill();
+    this.start_game = game.add.sprite((game.width /2)+40, game.height-100, 'start_game');
+    this.start_game.anchor.set(0.5);
+    this.start_game.inputEnabled = true;
+    this.start_game.events.onInputDown.add(startGame);
+    if(item.key == 'modi')
+    {
+      this.modi_image.kill();
+      this.modi_label.kill();
+      this.biden_image.kill();
+      this.biden_label.kill();
+      this.modi_image = game.add.sprite((game.width /2)-40, 150, 'modi');//.scale.setTo(1.2);
+      this.modi_image.animations.add('dance_modi');
+      this.modi_image.animations.play('dance_modi', 10, true);
+    }
+    else {
+      this.biden_image.kill();
+      this.biden_label.kill()
+      this.modi_image.kill();
+      this.modi_label.kill()
+      this.biden_image = game.add.sprite((game.width /2)-40, 150, 'biden');//.scale.setTo(1.2);
+      this.biden_image.animations.add('dance_biden');
+      this.biden_image.animations.play('dance_biden', 10, true);
+    }
 
-    start_game = game.add.sprite((game.width /2)+40, game.height-100, 'start_game');
-    start_game.anchor.set(0.5);
-    start_game.inputEnabled = true;
-    start_game.events.onInputDown.add(startGame);
+
+
 
 }
 
