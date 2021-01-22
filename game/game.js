@@ -6,6 +6,8 @@ function preload() {
     game.load.atlasJSONHash('biden', '../assets/biden_spritesheet.png', '../assets/biden_spritesheet.json');
     game.load.atlasJSONHash('modi', '../assets/modi_spritesheet.png', '../assets/modi_spritesheet.json');
     game.load.image("avatar_bg", "../assets/avatar.jpeg");
+    game.load.image("modi_label", "../assets/modi_label.png");
+    game.load.image("biden_label", "../assets/biden_label.png");
     game.load.spritesheet("avatar_select", "../assets/avatar_select.png");
     game.load.spritesheet("start_game", "../assets/start_game.png");
     //preload for player selection starts
@@ -38,9 +40,11 @@ var start_game;
 
 function create(){
   game.add.tileSprite(0, 0, 1320, 600 , 'avatar_bg');
-  let select_avatar = game.add.sprite((game.width /2)-200, 50, 'avatar_select');
-  let biden_image = game.add.sprite((game.width /2)-150, 200, 'biden');
-  let modi_image = game.add.sprite((game.width /2)+150, 200, 'modi');
+  let select_avatar = game.add.sprite((game.width /2)-150, 50, 'avatar_select');
+  let biden_image = game.add.sprite((game.width /2)-200, 150, 'biden');
+  let biden_label = game.add.sprite((game.width /2)-200, 400, 'biden_label');
+  let modi_image = game.add.sprite((game.width /2)+150, 150, 'modi');
+  let modi_label = game.add.sprite((game.width /2)+150, 400, 'modi_label');
   biden_image.animations.add('dance_biden');
   modi_image.animations.add('dance_modi');
   biden_image.inputEnabled = true;
@@ -66,7 +70,8 @@ function selectCharacter(item, pointer)
 }
 
 function startGame(item, pointer) {
-  console.log('-- start game ---');
+
+
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.tileSprite(0, 0, 7000, 500 , 'backgroung');
@@ -86,7 +91,7 @@ function startGame(item, pointer) {
     //map.setCollisionBetween(1, 34);
     if(this.selectedCharacter == 'biden')
     {
-      player = game.add.sprite(100, 350, 'biden_avatar');  
+      player = game.add.sprite(100, 350, 'biden_avatar');
     }else
     {
       player = game.add.sprite(100, 350, 'modi_avatar');
