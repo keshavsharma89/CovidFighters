@@ -215,12 +215,14 @@ function createProtectionBar()
 
   var shieldBarSprite = this.game.add.sprite(defaultConfig.x, defaultConfig.y+80, bmdw);
   shieldBarSprite.fixedToCamera= true;
+    immune = true;
 
   var shieldTween  = this.game.add.tween(shieldBarSprite).to( { width: 0 }, 5000, Phaser.Easing.Linear.None, true);
   shieldTween.onComplete.add(function(){shieldBarSprite.kill();
   shieldBgSprite.kill();
   shieldBorderSprite.kill();
   shield_label.kill();
+    immune = false;
   });
 }
 
@@ -379,19 +381,7 @@ createProtectionBar();
 
 }
 
-function protection()
-{
-  barSprite.tint = Math.random()* 0xffffff;
-  immune = true;
-}
-function removeProtection(){
-  if(shield)
-  {game.time.events.remove(shield);
-    barSprite.tint = 0xffffff;
-    immune = false;
-  }
 
-}
 function collisionHandler (spray, covid){
     //  When a bullet hits an alien we kill them both
     spray.kill();
