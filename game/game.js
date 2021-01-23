@@ -1,4 +1,3 @@
-
 var game = new Phaser.Game(1340, 550, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
@@ -43,10 +42,36 @@ var modi_image;
 var modi_label;
 var select_avatar;
 var spraySound;
+var selectPlayerBackground;
+var health_label;
+var borderSprite ;
+var bgSprite;
+var barSprite ;
+var health_status;
+var defaultConfig= {
+    width: 250,
+    height: 15,
+    x: 10,
+    y: 40,
+    bg: {
+        color: '#651828'
+    },
+    bar: {
+        color: '#53fc0a'
+    },
+    border: {
+        color: "#eeeeee",
+        width: 1
+    },
+    animationDuration: 200,
+    flipped: false,
+    isFixedToCamera: false
+};
+
 function create(){
 
   game.physics.startSystem(Phaser.Physics.ARCADE);
-  game.add.tileSprite(0, 0, 1320, 600 , 'avatar_bg');
+  selectPlayerBackground = game.add.tileSprite(0, 0, 1320, 600 , 'avatar_bg');
   select_avatar = game.add.sprite((game.width /2)-150, 50, 'avatar_select');
   biden_image = game.add.sprite((game.width /2)-200, 150, 'biden');
   biden_label = game.add.sprite((game.width /2)-200, 400, 'biden_label');
@@ -101,9 +126,54 @@ function selectCharacter(item, pointer)
 
 }
 
+function createHealthBar()
+{
+
+
+	health_label = this.game.add.text(10, 10, 'Player Health', { font: '20px Arial', fill: '#53fc0a' })
+  health_label.fixedToCamera= true;
+
+  let border = defaultConfig.border.width * 2;
+  let bmd = this.game.add.bitmapData(defaultConfig.width + border, defaultConfig.height + border);
+  bmd.ctx.fillStyle = defaultConfig.border.color;
+  bmd.ctx.beginPath();
+  bmd.ctx.rect(0, 0, defaultConfig.width + border, defaultConfig.height + border);
+  bmd.ctx.stroke();
+  bmd.update();
+
+  borderSprite = this.game.add.sprite(defaultConfig.x, defaultConfig.y, bmd);
+  borderSprite.fixedToCamera= true;
+
+  let bmdg = this.game.add.bitmapData(defaultConfig.width, defaultConfig.height);
+  bmdg.ctx.fillStyle = defaultConfig.bg.color;
+  bmdg.ctx.beginPath();
+  bmdg.ctx.rect(0, 0, defaultConfig.width, defaultConfig.height);
+  bmdg.ctx.fill();
+  bmdg.update();
+
+  bgSprite = this.game.add.sprite(defaultConfig.x, defaultConfig.y, bmdg);
+  bgSprite.fixedToCamera= true;
+
+  let bmdw = this.game.add.bitmapData(defaultConfig.width, defaultConfig.height);
+  bmdw.ctx.fillStyle = defaultConfig.bar.color;
+  bmdw.ctx.beginPath();
+  bmdw.ctx.rect(0,0, defaultConfig.width, defaultConfig.height);
+  bmdw.ctx.fill();
+  bmdw.update();
+
+  barSprite = this.game.add.sprite(defaultConfig.x, defaultConfig.y, bmdw);
+  barSprite.fixedToCamera= true;
+
+  health_status = this.game.add.text(100, 40, '500/500', { font: '12px Arial', fill: '#000000' })
+  health_status.fixedToCamera= true;
+}
+
 function startGame(item, pointer) {
 
 
+    console.log(this.selectPlayerBackground);
+    if(this.selectPlayerBackground)
+    {this.selectPlayerBackground.kill();}
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.tileSprite(0, 0, 7000, 500 , 'backgroung');
@@ -133,6 +203,7 @@ function startGame(item, pointer) {
 
     createBats();
     createCoronaVirus();
+    createHealthBar();
 
     game.camera.follow(player);
     cursors = game.input.keyboard.createCursorKeys();
