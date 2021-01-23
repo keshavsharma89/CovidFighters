@@ -82,7 +82,7 @@ function selectCharacter(item, pointer)
       this.biden_label.kill();
       this.modi_image = game.add.sprite((game.width /2)-40, 150, 'modi');//.scale.setTo(1.2);
       this.modi_image.animations.add('dance_modi');
-      this.modi_image.animations.play('dance_modi', 10, true);
+      this.modi_image.animations.play('dance_modi', 7, true);
     }
     else {
       this.biden_image.kill();
@@ -91,7 +91,7 @@ function selectCharacter(item, pointer)
       this.modi_label.kill()
       this.biden_image = game.add.sprite((game.width /2)-40, 150, 'biden');//.scale.setTo(1.2);
       this.biden_image.animations.add('dance_biden');
-      this.biden_image.animations.play('dance_biden', 10, true);
+      this.biden_image.animations.play('dance_biden', 30, true);
     }
 
 
