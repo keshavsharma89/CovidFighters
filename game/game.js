@@ -48,10 +48,12 @@ var borderSprite ;
 var bgSprite;
 var barSprite ;
 var health_status;
+var totalHealth = 500;
+var currentHealth = 500;
 var defaultConfig= {
     width: 250,
     height: 15,
-    x: 10,
+    x: 40,
     y: 40,
     bg: {
         color: '#651828'
@@ -130,7 +132,7 @@ function createHealthBar()
 {
 
 
-	health_label = this.game.add.text(10, 10, 'Player Health', { font: '20px Arial', fill: '#53fc0a' })
+	health_label = this.game.add.text(40, 10, 'Player Health', { font: '20px Arial', fill: '#53fc0a' })
   health_label.fixedToCamera= true;
 
   let border = defaultConfig.border.width * 2;
@@ -164,7 +166,7 @@ function createHealthBar()
   barSprite = this.game.add.sprite(defaultConfig.x, defaultConfig.y, bmdw);
   barSprite.fixedToCamera= true;
 
-  health_status = this.game.add.text(100, 40, '500/500', { font: '12px Arial', fill: '#000000' })
+  health_status = this.game.add.text(100, 40, currentHealth+'/'+totalHealth, { font: '12px Arial', fill: '#000000' })
   health_status.fixedToCamera= true;
 }
 
@@ -297,17 +299,87 @@ function update() {
       game.physics.arcade.overlap(sanitizer, player, sanitizerCollisionHandler, null, this);
       game.physics.arcade.overlap(vaccine, player, vaccineCollisionHandler, null, this);
       game.physics.arcade.collide(spray.bullets, covid, collisionHandler);
+      game.physics.arcade.collide(player, covid, playerCoronaCollisionHandler);
   }
 
 }
 function vaccineCollisionHandler(player, vaccine){
   vaccine.kill();
+  currentHealth = currentHealth + 100;
+  if(currentHealth > 500) currentHealth = 500;
+  setPercent(currentHealth);
+
+  if(currentHealth >= 250) {
+       setBarColor('#53fc0a');
+  }
+
 }
 function collisionHandler (spray, covid){
     //  When a bullet hits an alien we kill them both
     spray.kill();
     covid.kill();
 }
+
+function playerCoronaCollisionHandler(player, covid)
+{
+  currentHealth = currentHealth - 200;
+  if(currentHealth < 0) currentHealth = 0;
+  setPercent(currentHealth);
+
+  if(currentHealth < 250) {
+       setBarColor('#fc9802');
+  }
+  covid.kill();
+}
+
+
+function setPercent(newValue){
+  if(newValue < 0) newValue = 0;
+  if(newValue > 500) newValue = 500;
+
+  let newWidth =  (newValue * defaultConfig.width) / 500;
+
+  setWidth(newWidth);
+}
+
+function setWidth(newWidth){
+  health_status.text = currentHealth+'/'+totalHealth;
+  this.game.add.tween(barSprite).to( { width: newWidth }, defaultConfig.animationDuration, Phaser.Easing.Linear.None, true);
+}
+
+function setBarColor(newColor) {
+  let bmd = this.barSprite.key;
+  bmd.update();
+
+  let currentRGBColor = bmd.getPixelRGB(0, 0);
+  let newRGBColor = hexToRgb(newColor);
+  bmd.replaceRGB(currentRGBColor.r,
+                  currentRGBColor.g,
+                  currentRGBColor.b,
+                  255 ,
+
+                  newRGBColor.r,
+                  newRGBColor.g,
+                  newRGBColor.b,
+                  255);
+
+}
+
+function hexToRgb(hex) {
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
+
 function sanitizerCollisionHandler (player, sanitizer ) {
     //  When a powerUp hits player we change bullet
     sanitizer.kill();
