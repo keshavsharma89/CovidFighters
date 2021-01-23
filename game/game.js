@@ -14,8 +14,8 @@ function preload() {
     game.load.image('backgroung', '../assets/Game_background.png');
     game.load.image('covid', '../assets/covid.png');
     game.load.image('sanitizer','../assets/sanitizer.png');
-    game.load.spritesheet('modi_avatar', '../assets/modi1152.png', 127, 190);
-    game.load.spritesheet('biden_avatar', '../assets/biden1152.png', 127, 190);
+    game.load.spritesheet('modi_avatar', '../assets/modi1152.png', 127, 155);
+    game.load.spritesheet('biden_avatar', '../assets/biden11521.png', 127, 155);
     game.load.atlasJSONHash('bat', '../assets/bat.png', '../assets/bat.json');
     game.load.image('spray', '../assets/spray.png');
     game.load.audio('spraySound', '../assets/SoundEffects/spray-sound.mp3');
@@ -30,6 +30,7 @@ var jumpTimer = 0;
 var facing='';
 var sanitizer;
 var covid;
+var coronaGroup;
 var spray;
 var vaccine;
 var bat;
@@ -86,8 +87,9 @@ function create(){
 
   biden_image.animations.play('dance_biden', 30, true);
   modi_image.animations.play('dance_modi', 7, true);
-  biden_image.events.onInputDown.add(selectCharacter);
-  modi_image.events.onInputDown.add(selectCharacter);
+  startGame();
+  //biden_image.events.onInputDown.add(selectCharacter);
+  //modi_image.events.onInputDown.add(selectCharacter);
 
   game.physics.arcade.enable(biden_image);
   game.physics.arcade.enable(modi_image);
@@ -189,55 +191,59 @@ function startGame(item, pointer) {
       player = game.add.sprite(100, 350, 'modi_avatar');
     }
 
-    game.physics.enable(player, Phaser.Physics.ARCADE);
-
-    player.body.bounce.y = 0.2;
+    covid = game.add.group();
+    covid.enableBody = true;
+    for (var i = 1; i < 10; i++)
+    {
+        var c = covid.create(i*900, 390, 'covid');
+        c.body.setCircle(45);
+        c.body.allowGravity = false;
+    }
+    createBats();
+    createCoronaVirus();
+    game.physics.enable([player,covid, coronaGroup], Phaser.Physics.ARCADE);
     player.body.collideWorldBounds = true;
-    player.body.setSize(38, 200, 4, 16);
+    player.body.setSize(127, 155, 4, 5);
     player.body.tilePadding.set(32);
 
     player.animations.add('left', [0, 1, 2, 3], 10, true);
     player.animations.add('turn', [4], 20, true);
     player.animations.add('right', [5, 6, 7, 8], 10, true);
 
-    createBats();
-    createCoronaVirus();
+
+
     createHealthBar();
+    createSanitizers();
+    createVaccine();
 
     game.camera.follow(player);
     cursors = game.input.keyboard.createCursorKeys();
     sprayButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-    sanitizer = game.add.group();
-    sanitizer.enableBody = true;
-    for (var i = 1; i < 5; i++)
-    {
-        var s = sanitizer.create(i*600, 150, 'sanitizer');
-        s.body.allowGravity = false;
-    }
-
-    vaccine = game.add.group();
-    vaccine.enableBody = true;
-    for (var i = 1; i < 5; i++)
-    {
-        var s = vaccine.create(i*700, 150, 'vaccine');
-        s.body.allowGravity = false;
-    }
-
-    covid = game.add.group();
-    covid.enableBody = true;
-    for (var i = 1; i < 10; i++)
-    {
-        var c = covid.create(i*900, 350, 'covid');
-        c.body.allowGravity = false;
-    }
 
     spray = game.add.weapon(10, 'spray');
     spraySound = game.add.audio('spraySound');
     doSpray();
 }
 
+function createSanitizers(){
+  sanitizer = game.add.group();
+  sanitizer.enableBody = true;
+  for (var i = 1; i < 10; i++)
+  {
+      var s = sanitizer.create(i*600, 150, 'sanitizer');
+      s.body.allowGravity = false;
+  }
+}
 
+function createVaccine(){
+  vaccine = game.add.group();
+  vaccine.enableBody = true;
+  for (var i = 1; i < 5; i++)
+  {
+      var s = vaccine.create(i*900, 150, 'vaccine');
+      s.body.allowGravity = false;
+  }
+}
 
 function update() {
   if(player)
@@ -248,7 +254,7 @@ function update() {
       {
           player.body.velocity.x = -150;
           spray.bulletAngleOffset = 180;
-          spray.trackSprite(player, -30, 140, true);
+          spray.trackSprite(player, -30, 110, true);
 
           if (facing != 'left')
           {
@@ -260,7 +266,7 @@ function update() {
       {
           player.body.velocity.x = 150;
           spray.bulletAngleOffset = 0;
-          spray.trackSprite(player, 150, 140, true);
+          spray.trackSprite(player, 150, 110, true);
           if (facing != 'right')
           {
               player.animations.play('right');
@@ -293,13 +299,14 @@ function update() {
       }
       if (cursors.up.isDown && player.body.onFloor() && game.time.now > jumpTimer)
       {
-          player.body.velocity.y = -250;
+          player.body.velocity.y = -280;
           jumpTimer = game.time.now + 750;
       }
       game.physics.arcade.overlap(sanitizer, player, sanitizerCollisionHandler, null, this);
       game.physics.arcade.overlap(vaccine, player, vaccineCollisionHandler, null, this);
       game.physics.arcade.collide(spray.bullets, covid, collisionHandler);
       game.physics.arcade.collide(player, covid, playerCoronaCollisionHandler);
+      game.physics.arcade.collide(player, coronaGroup, playerCoronaCollisionHandler);
   }
 
 }
@@ -328,6 +335,9 @@ function playerCoronaCollisionHandler(player, covid)
 
   if(currentHealth < 250) {
        setBarColor('#fc9802');
+  }
+  if(currentHealth == 0 ){
+    player.body.collideWorldBounds = false;
   }
   covid.kill();
 }
@@ -389,10 +399,10 @@ function sanitizerCollisionHandler (player, sanitizer ) {
     doSpray();
 }
 
-function render() {
-  // game.debug.text(game.time.physicsElapsed, 32, 32);
-  // game.debug.body(player);
-  // game.debug.bodyInfo(player, 16, 24);
-  // game.debug.cameraInfo(game.camera, 32, 32);
 
+function render() {
+  // game.debug.body(player);
+  // covid.forEachAlive(function(b){
+  //   game.debug.body(b);
+  // });
 }

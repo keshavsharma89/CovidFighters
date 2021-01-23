@@ -25,6 +25,6 @@ spray.onFire.add(function(){
 //  Tell the Weapon to track the 'player' Sprite
 //  With no offsets from the position
 //  But the 'true' argument tells the weapon to track sprite rotation
-spray.trackSprite(player, 150, 140, true);
+spray.trackSprite(player, 150, 110, true);
 
 }
