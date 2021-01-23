@@ -21,9 +21,12 @@ function preload() {
     game.load.audio('spraySound', '../assets/SoundEffects/spray-sound.mp3');
     game.load.image('vaccine', '../assets/vaccine.png');
     game.load.image('coronavirus', '../assets/coronavirus.png');
-    game.load.image('congratulation','../assets/congratulation.png');
+    game.load.atlasJSONHash('biden_win', '../assets/biden_win.png', '../assets/biden_win.json');
+    game.load.atlasJSONHash('modi_win', '../assets/modi_win.png', '../assets/modi_win.json');
+    game.load.atlasJSONHash('defeat', '../assets/defeat.png', '../assets/defeat.json');
 }
-var congratulation;
+var winner_image;
+var defeat;
 var cursors;
 var player;
 var sprayButton;
@@ -93,9 +96,10 @@ function create(){
 
   biden_image.animations.play('dance_biden', 30, true);
   modi_image.animations.play('dance_modi', 7, true);
-  startGame();
-  //biden_image.events.onInputDown.add(selectCharacter);
-  //modi_image.events.onInputDown.add(selectCharacter);
+  //startGame();
+  biden_image.events.onInputDown.add(selectCharacter);
+  modi_image.events.onInputDown.add(selectCharacter);
+
 
   game.physics.arcade.enable(biden_image);
   game.physics.arcade.enable(modi_image);
@@ -237,10 +241,21 @@ function startGame(item, pointer) {
     if(this.selectedCharacter == 'biden')
     {
       player = game.add.sprite(100, 350, 'biden_avatar');
+      winner_image = game.add.sprite(6500, 150, 'biden_win');
+      winner_image.animations.add('win');
+      winner_image.animations.play('win', 10, true);
     }else
     {
       player = game.add.sprite(100, 350, 'modi_avatar');
+      winner_image = game.add.sprite(6500, 150, 'modi_win');
+      winner_image.animations.add('win');
+      winner_image.animations.play('win', 10, true);
     }
+    winner_image.visible = false;
+    defeat = game.add.sprite(1000, 150, 'defeat');
+    defeat.animations.add('lose');
+    defeat.animations.play('lose', 10, true);
+    defeat.visible = false;
     covid = game.add.group();
     covid.enableBody = true;
     for (var i = 1; i < 10; i++)
@@ -251,9 +266,8 @@ function startGame(item, pointer) {
     }
     createBats();
     createCoronaVirus();
-    congratulation = game.add.sprite(6500, 250, 'congratulation');
-    game.physics.enable([player,covid, coronaGroup, congratulation], Phaser.Physics.ARCADE);
-    congratulation.body.allowGravity = false;
+    game.physics.enable([player,covid, coronaGroup], Phaser.Physics.ARCADE);
+
     player.body.collideWorldBounds = true;
     player.body.setSize(127, 155, 4, 5);
 
@@ -297,24 +311,28 @@ function createVaccine(){
 function update() {
   if(player)
   {
-    if(player.x>6500){
+    if(player.x>6300){
 
       player.body.allowGravity = false;
       player.body.collideWorldBounds = false;
-      congratulation.body.velocity.y -= 10;
       player.body.velocity.x = 350;
       player.animations.play('right');
-      player.x += 10;
-
+      player.x += 5;
     }
     if(player.x>7000){
       player.kill();
+      winner_image.visible = true;
+    }
+    if(currentHealth == 0 ){
+      defeat.x = player.x;
+      defeat.visible = true;
+      player.body.collideWorldBounds = false;
     }
     player.body.velocity.x = 0;
     bat.x -= 1;
       if (cursors.left.isDown)
       {
-          player.body.velocity.x = -250;
+          player.body.velocity.x = -200;
           spray.bulletAngleOffset = 180;
           spray.trackSprite(player, -30, 110, true);
 
@@ -326,7 +344,7 @@ function update() {
       }
       else if (cursors.right.isDown)
       {
-          player.body.velocity.x = 350;
+          player.body.velocity.x = 200;
           spray.bulletAngleOffset = 0;
           spray.trackSprite(player, 150, 110, true);
           if (facing != 'right')
@@ -361,7 +379,7 @@ function update() {
       }
       if (cursors.up.isDown && player.body.onFloor() && game.time.now > jumpTimer)
       {
-          player.body.velocity.y = -280;
+          player.body.velocity.y = -250;
           jumpTimer = game.time.now + 750;
       }
       game.physics.arcade.overlap(sanitizer, player, sanitizerCollisionHandler, null, this);
@@ -406,9 +424,6 @@ function playerCoronaCollisionHandler(player, covid)
     if(currentHealth < 250) {
          setBarColor('#fc9802');
     }
-  }
-  if(currentHealth == 0 ){
-    player.body.collideWorldBounds = false;
   }
   covid.kill();
 }
