@@ -27,7 +27,7 @@ function update() {}
 
 // other helper functions
 function startBiden(){
-  joeBidenText = game.add.sprite( 150, 10, 'joeBidenText');
+  joeBidenText = game.add.sprite( 400, 200, 'joeBidenText');
   joeBidenText.animations.add('joe_Biden_Text');
   joeBidenText.animations.play('joe_Biden_Text', 10, true);
 
@@ -47,7 +47,7 @@ function startBidenEntry(){
 function startModi(){
   biden_image.kill();
 
-  narendraModiText = game.add.sprite( 150, 10, 'narendraModiText');
+  narendraModiText = game.add.sprite( 250, 220, 'narendraModiText');
   narendraModiText.animations.add('narendra_ModiText');
   narendraModiText.animations.play('narendra_ModiText', 10, true);
   game.time.events.add(Phaser.Timer.SECOND * 2, startModiEntry, this);
@@ -64,8 +64,8 @@ function startModiEntry(){
 
 function showTitle(){
   modi_image.kill();
-  covidFightersText = game.add.sprite(0, 0, 'covidFightersText');
+  covidFightersText = game.add.sprite(90, 220, 'covidFightersText');
   covidFightersText.animations.add('covid_Fighters_Text');
-  covidFightersText.scale.setTo(0.5);
+  covidFightersText.scale.setTo(1.3);
   covidFightersText.animations.play('covid_Fighters_Text', 10, true);
 }
