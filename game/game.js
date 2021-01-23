@@ -19,6 +19,7 @@ function preload() {
     game.load.spritesheet('biden_avatar', '../assets/biden1152.png', 127, 190);
     game.load.atlasJSONHash('bat', '../assets/bat.png', '../assets/bat.json');
     game.load.image('spray', '../assets/spray.png');
+    game.load.audio('spraySound', '../assets/SoundEffects/spray-sound.mp3');
     game.load.image('vaccine', '../assets/vaccine.png');
     game.load.image('coronavirus', '../assets/coronavirus.png');
 }
@@ -41,6 +42,7 @@ var biden_label;
 var modi_image;
 var modi_label;
 var select_avatar;
+var spraySound;
 function create(){
 
   game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -160,7 +162,8 @@ function startGame(item, pointer) {
         c.body.allowGravity = false;
     }
 
-    spray = game.add.weapon(1, 'spray');
+    spray = game.add.weapon(10, 'spray');
+    spraySound = game.add.audio('spraySound');
     doSpray();
 }
 
@@ -174,6 +177,8 @@ function update() {
       if (cursors.left.isDown)
       {
           player.body.velocity.x = -150;
+          spray.bulletAngleOffset = 180;
+          spray.trackSprite(player, -30, 140, true);
 
           if (facing != 'left')
           {
@@ -184,7 +189,8 @@ function update() {
       else if (cursors.right.isDown)
       {
           player.body.velocity.x = 150;
-
+          spray.bulletAngleOffset = 0;
+          spray.trackSprite(player, 150, 140, true);
           if (facing != 'right')
           {
               player.animations.play('right');
