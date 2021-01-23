@@ -277,7 +277,7 @@ function startGame(item, pointer) {
 function createSanitizers(){
   sanitizer = game.add.group();
   sanitizer.enableBody = true;
-  for (var i = 1; i < 1; i++)
+  for (var i = 1; i < 5; i++)
   {
       var s = sanitizer.create(i*600, 150, 'sanitizer');
       s.body.allowGravity = false;
@@ -297,11 +297,14 @@ function createVaccine(){
 function update() {
   if(player)
   {
-    if(player.x>6700){
+    if(player.x>6500){
 
       player.body.allowGravity = false;
       player.body.collideWorldBounds = false;
       congratulation.body.velocity.y -= 10;
+      player.body.velocity.x = 350;
+      player.animations.play('right');
+      player.x += 10;
 
     }
     if(player.x>7000){
