@@ -17,15 +17,17 @@ function preload() {
 var bgmusic, joeBidenText, biden_image, narendraModiText, modi_image, covidFightersText;
 
 function create() {
-  bgmusic = game.add.audio('loading_audio');
-  bgmusic.play();
-  game.time.events.add(Phaser.Timer.SECOND * 4, startBiden, this);
-
+  game.input.onDown.addOnce(startBgmusic, this);
 }
 
 function update() {}
 
 // other helper functions
+function startBgmusic(){
+  bgmusic = game.add.audio('loading_audio');
+  bgmusic.play();
+  game.time.events.add(Phaser.Timer.SECOND * 4, startBiden, this);
+}
 function startBiden(){
   joeBidenText = game.add.sprite( 400, 200, 'joeBidenText');
   joeBidenText.animations.add('joe_Biden_Text');
