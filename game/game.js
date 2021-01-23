@@ -50,6 +50,8 @@ var barSprite ;
 var health_status;
 var totalHealth = 500;
 var currentHealth = 500;
+var shield;
+var immune = false;
 var defaultConfig= {
     width: 250,
     height: 15,
@@ -60,6 +62,9 @@ var defaultConfig= {
     },
     bar: {
         color: '#53fc0a'
+    },
+    shieldBar: {
+        color: '#0ad4fc'
     },
     border: {
         color: "#eeeeee",
@@ -166,8 +171,55 @@ function createHealthBar()
   barSprite = this.game.add.sprite(defaultConfig.x, defaultConfig.y, bmdw);
   barSprite.fixedToCamera= true;
 
-  health_status = this.game.add.text(100, 40, currentHealth+'/'+totalHealth, { font: '12px Arial', fill: '#000000' })
+  health_status = this.game.add.text(130, 40, currentHealth+'/'+totalHealth, { font: '12px Arial', fill: '#000000' })
   health_status.fixedToCamera= true;
+}
+
+
+function createProtectionBar()
+{
+
+
+	var shield_label = this.game.add.text(40, 80, 'Player Shield', { font: '20px Arial', fill: '#0ad4fc' })
+  shield_label.fixedToCamera= true;
+
+  let border = defaultConfig.border.width * 2;
+  let bmd = this.game.add.bitmapData(defaultConfig.width + border, defaultConfig.height + border);
+  bmd.ctx.fillStyle = defaultConfig.border.color;
+  bmd.ctx.beginPath();
+  bmd.ctx.rect(0, 0, defaultConfig.width + border, defaultConfig.height + border);
+  bmd.ctx.stroke();
+  bmd.update();
+
+  var shieldBorderSprite = this.game.add.sprite(defaultConfig.x, defaultConfig.y+80, bmd);
+  shieldBorderSprite.fixedToCamera= true;
+
+  let bmdg = this.game.add.bitmapData(defaultConfig.width, defaultConfig.height);
+  bmdg.ctx.fillStyle = defaultConfig.bg.color;
+  bmdg.ctx.beginPath();
+  bmdg.ctx.rect(0, 0, defaultConfig.width, defaultConfig.height);
+  bmdg.ctx.fill();
+  bmdg.update();
+
+  var shieldBgSprite = this.game.add.sprite(defaultConfig.x, defaultConfig.y+80, bmdg);
+  shieldBgSprite.fixedToCamera= true;
+
+  let bmdw = this.game.add.bitmapData(defaultConfig.width, defaultConfig.height);
+  bmdw.ctx.fillStyle = defaultConfig.shieldBar.color;
+  bmdw.ctx.beginPath();
+  bmdw.ctx.rect(0,0, defaultConfig.width, defaultConfig.height);
+  bmdw.ctx.fill();
+  bmdw.update();
+
+  var shieldBarSprite = this.game.add.sprite(defaultConfig.x, defaultConfig.y+80, bmdw);
+  shieldBarSprite.fixedToCamera= true;
+
+  var shieldTween  = this.game.add.tween(shieldBarSprite).to( { width: 0 }, 5000, Phaser.Easing.Linear.None, true);
+  shieldTween.onComplete.add(function(){shieldBarSprite.kill();
+  shieldBgSprite.kill();
+  shieldBorderSprite.kill();
+  shield_label.kill();
+  });
 }
 
 function startGame(item, pointer) {
@@ -313,6 +365,25 @@ function vaccineCollisionHandler(player, vaccine){
        setBarColor('#53fc0a');
   }
 
+createProtectionBar();
+//  shield = game.time.events.loop(Phaser.Timer.SECOND * 1, protection, this);
+
+//  game.time.events.add(Phaser.Timer.SECOND * 6, removeProtection, this);
+
+}
+
+function protection()
+{
+  barSprite.tint = Math.random()* 0xffffff;
+  immune = true;
+}
+function removeProtection(){
+  if(shield)
+  {game.time.events.remove(shield);
+    barSprite.tint = 0xffffff;
+    immune = false;
+  }
+
 }
 function collisionHandler (spray, covid){
     //  When a bullet hits an alien we kill them both
@@ -322,13 +393,16 @@ function collisionHandler (spray, covid){
 
 function playerCoronaCollisionHandler(player, covid)
 {
-  currentHealth = currentHealth - 200;
-  if(currentHealth < 0) currentHealth = 0;
-  setPercent(currentHealth);
+  if(!immune){
+    currentHealth = currentHealth - 200;
+    if(currentHealth < 0) currentHealth = 0;
+    setPercent(currentHealth);
 
-  if(currentHealth < 250) {
-       setBarColor('#fc9802');
+    if(currentHealth < 250) {
+         setBarColor('#fc9802');
+    }
   }
+
   covid.kill();
 }
 
