@@ -3,10 +3,12 @@ var game = new Phaser.Game(1320, 600, Phaser.WEBGL, 'phaser-example', { preload:
 
 function preload() {
   game.load.audio('loading_audio', '../assets/audio/entry_music.mp3');
-  game.load.image('narendraModiText', '../assets/NarendraModiText.png');
-  game.load.image('joeBidenText', '../assets/JoeBidenText.png');
-  game.load.image('covidFightersText', '../assets/CovidFightersText.png');
 
+
+
+  game.load.atlasJSONHash('covidFightersText', '../assets/CovidFightersTxt.png', '../assets/CovidFightersTxt.json');
+  game.load.atlasJSONHash('narendraModiText', '../assets/NarendraModiText.png', '../assets/NarendraModiText.json');
+  game.load.atlasJSONHash('joeBidenText', '../assets/JoeBidenText.png', '../assets/JoeBidenText.json');
   game.load.atlasJSONHash('modiEntry', '../assets/modiEntry.png', '../assets/modiEntry.json');
   game.load.atlasJSONHash('biden', '../assets/bidenEntry.png', '../assets/bidenEntry.json');
 
@@ -25,8 +27,10 @@ function update() {}
 
 // other helper functions
 function startBiden(){
-  joeBidenText = game.add.sprite(380, 300, 'joeBidenText');
-  game.physics.enable(joeBidenText, Phaser.Physics.ARCADE);
+  joeBidenText = game.add.sprite( 150, 10, 'joeBidenText');
+  joeBidenText.animations.add('joe_Biden_Text');
+  joeBidenText.animations.play('joe_Biden_Text', 10, true);
+
   game.time.events.add(Phaser.Timer.SECOND * 2, startBidenEntry, this);
 }
 
@@ -42,8 +46,10 @@ function startBidenEntry(){
 
 function startModi(){
   biden_image.kill();
-  narendraModiText = game.add.sprite(380, 300, 'narendraModiText');
-  game.physics.enable(narendraModiText, Phaser.Physics.ARCADE);
+
+  narendraModiText = game.add.sprite( 150, 10, 'narendraModiText');
+  narendraModiText.animations.add('narendra_ModiText');
+  narendraModiText.animations.play('narendra_ModiText', 10, true);
   game.time.events.add(Phaser.Timer.SECOND * 2, startModiEntry, this);
 }
 
@@ -58,6 +64,8 @@ function startModiEntry(){
 
 function showTitle(){
   modi_image.kill();
-  covidFightersText = game.add.sprite(200, 300, 'covidFightersText');
-  game.physics.enable(covidFightersText, Phaser.Physics.ARCADE);
+  covidFightersText = game.add.sprite(0, 0, 'covidFightersText');
+  covidFightersText.animations.add('covid_Fighters_Text');
+  covidFightersText.scale.setTo(0.5);
+  covidFightersText.animations.play('covid_Fighters_Text', 10, true);
 }
