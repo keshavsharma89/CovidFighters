@@ -169,9 +169,6 @@ function createHealthBar()
 }
 
 function startGame(item, pointer) {
-
-
-    console.log(this.selectPlayerBackground);
     if(this.selectPlayerBackground)
     {this.selectPlayerBackground.kill();}
     game.physics.startSystem(Phaser.Physics.ARCADE);
