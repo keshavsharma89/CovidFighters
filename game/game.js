@@ -41,9 +41,10 @@ function preload() {
     game.load.atlasJSONHash('biden_win', '../assets/biden_win.png', '../assets/biden_win.json');
     game.load.atlasJSONHash('modi_win', '../assets/modi_win.png', '../assets/modi_win.json');
     game.load.atlasJSONHash('defeat', '../assets/defeat.png', '../assets/defeat.json');
-
+    game.load.image('win_flag', '../assets/win_flag.png');
 }
 var bgmusic;
+var win_flag;
 var joeBidenText;
 var biden_loading_image;
 var narendraModiText
@@ -325,18 +326,10 @@ function startGame(item, pointer) {
     selected_music.play();
 
     game.time.events.add(Phaser.Timer.SECOND * 1, startGameBG, this);
-
-
-
     if(this.selectPlayerBackground){
       this.selectPlayerBackground.kill();
     }
     selectCharacter_background_music.stop();
-
-
-
-
-
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.tileSprite(0, 0, 7000, 500 , 'backgroung');
@@ -361,6 +354,8 @@ function startGame(item, pointer) {
     defeat.animations.add('lose');
     defeat.animations.play('lose', 10, true);
     defeat.visible = false;
+
+    win_flag = game.add.sprite(6300, 250, 'win_flag');
     covid = game.add.group();
     covid.enableBody = true;
     for (var i = 1; i < 9; i++)
