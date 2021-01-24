@@ -373,13 +373,10 @@ function startGame(item, pointer) {
 
 
 
-<<<<<<< HEAD
-    if(this.selectPlayerBackground){
-      this.selectPlayerBackground.kill();
-=======
+
     if(selectPlayerBackground){
       selectPlayerBackground.kill();
->>>>>>> 7bc37efb0af670443ec7b12e33ba06408cb83374
+
     }
     selectCharacter_background_music.stop();
 
@@ -413,8 +410,7 @@ function startGame(item, pointer) {
     defeat.animations.add('lose');
     defeat.animations.play('lose', 10, true);
     defeat.visible = false;
-<<<<<<< HEAD
-=======
+
     defeat.fixedToCamera = true;
     defeat.inputEnabled = true;
     defeat.events.onInputDown.add(restartGame);
@@ -427,7 +423,7 @@ function startGame(item, pointer) {
 
 
     win_flag = game.add.sprite(6300, 250, 'win_flag');
->>>>>>> 7bc37efb0af670443ec7b12e33ba06408cb83374
+
     covid = game.add.group();
     covid.enableBody = true;
     for (var i = 1; i < 9; i++)
