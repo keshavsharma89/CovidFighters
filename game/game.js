@@ -51,9 +51,9 @@ var totalHealth = 500;
 var currentHealth = 500;
 var shield;
 var immune = false;
-var restartText;
 var shieldBarSprite;
 var shieldTween ;
+var introText, skipText;
 var defaultConfig= {
     width: 250,
     height: 15,
@@ -126,11 +126,22 @@ function preload() {
 }
 
 function create(){
- // game.input.onDown.addOnce(startBgmusic, this);
-  startCharacterSelection();
-  //startGame();
+  introText = game.add.text(1000, 530,'Intro', { font: '30px Arial', fill: '#fff' });
+  introText.anchor.setTo(0.5, 0.5);
+  introText.inputEnabled = true;
+  introText.visible = true;
+  introText.events.onInputDown.add(startBgmusic, this);
+
+  skipText = game.add.text(1200, 530,'Skip', { font: '30px Arial', fill: '#fff' });
+  skipText.anchor.setTo(0.5, 0.5);
+  skipText.inputEnabled = true;
+  skipText.visible = true;
+  skipText.events.onInputDown.add(startCharacterSelection, this);
+
 }
 function startBgmusic(){
+  introText.kill();
+  skipText.kill();
   bgmusic = game.add.audio('loading_audio');
   bgmusic.play();
   game.time.events.add(Phaser.Timer.SECOND * 4, startBiden, this);
@@ -185,6 +196,8 @@ function oneSecPause(){
   game.time.events.add(Phaser.Timer.SECOND * 1, startCharacterSelection, this);
 }
 function startCharacterSelection(){
+  introText.kill();
+  skipText.kill();
   game.physics.startSystem(Phaser.Physics.ARCADE);
   if(bgmusic)
     bgmusic.stop();
@@ -204,7 +217,7 @@ function startCharacterSelection(){
 
   biden_image.animations.play('dance_biden', 30, true);
   modi_image.animations.play('dance_modi', 7, true);
-  //startGame();
+
   biden_image.events.onInputDown.add(selectCharacter);
   game.physics.arcade.enable(biden_image);
 
@@ -247,40 +260,6 @@ function selectCharacter(item, pointer)
     }
 }
 
-function restartGame()
-{
-  if(defeat)
-    defeat.kill();
-  restartText.kill();
-  if(selected_music)
-    selected_music.stop();
-
-  if(player)
-    player.kill();
-
-  if(sanitizer)
-    sanitizer.kill();
-
-  if(vaccine)
-    vaccine.kill();
-
-  if(bat)
-    bat.kill();
-
-  if(coronaGroup)
-    coronaGroup.kill();
-
-  if(covid)
-    covid.kill();
-
-  if(selectPlayerBackground){
-    selectPlayerBackground.kill();
-  }
-  this.game.state.restart();
-  currentHealth = 500;
-  facing = 'idle';
-  startCharacterSelection();
-}
 function createHealthBar()
 {
 
@@ -414,15 +393,6 @@ function startGame(item, pointer) {
     defeat.visible = false;
 
     defeat.fixedToCamera = true;
-    defeat.inputEnabled = true;
-    defeat.events.onInputDown.add(restartGame);
-
-    restartText = game.add.sprite(350, 430, 'restart_text');
-    restartText.visible = false;
-    restartText.fixedToCamera = true;
-    restartText.inputEnabled = true;
-    restartText.events.onInputDown.add(restartGame);
-
 
     win_flag = game.add.sprite(6300, 250, 'win_flag');
 
@@ -456,12 +426,12 @@ function startGame(item, pointer) {
     sprayButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
     spray = game.add.weapon(10, 'spray');
-    spraySound = game.add.audio('spraySound');
+    spraySound = game.add.audio('spraySound', 10);
     doSpray();
 }
 
 function startGameBG() {
-  gameBG = game.add.audio('gameBG');
+  gameBG = game.add.audio('gameBG', 0.8);
   gameBG.play();
 }
 
@@ -515,10 +485,14 @@ function update() {
       player.kill();
       winner_image.visible = true;
       win_flag.kill();
+      if(boss_Level_music)
+        boss_Level_music.stop();
 
       if(is_player_won){
         won_music = game.add.audio('won_music');
         won_music.play();
+        gameBG = game.add.audio('gameBG', 0.8);
+        gameBG.play();
         is_player_won= false;
       }
     }
@@ -533,8 +507,6 @@ function update() {
       coronaGroup.kill();
       covid.kill();
 
-  //    game.add.tween(defeat.scale).to( { x: 1.2, y: 1.2 }, 1000, Phaser.Easing.Elastic.Out, true);
-
       if(is_player_killed){
         fall_die_Sound = game.add.audio('fall_die_Sound');
         fall_die_Sound.play();
@@ -545,15 +517,8 @@ function update() {
     if(currentHealth == 0 && game.time.now > player_died_timer){
       player.kill();
       defeat.visible = true;
-      restartText.visible = true;
       defeat.scale.set(1.2);
-      //if(defeat.visible)
-
-
-      //if(restartText.visible)
-        restartText.events.onInputDown.add(startCharacterSelection);
-
-  }
+    }
     if(player.body)
       player.body.velocity.x = 0;
       if (cursors.left.isDown)
@@ -714,11 +679,7 @@ function hexToRgb(hex) {
 function sanitizerCollisionHandler (player, sanitizer ) {
     sanitizer_sound = game.add.audio('sanitizer_sound');
     sanitizer_sound.play();
-
-
-    //  When a powerUp hits player we change bullet
     sanitizer.kill();
-    //powerGain.play();
 
     spray = game.add.weapon(10, 'spray');
     doSpray();

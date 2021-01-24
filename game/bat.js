@@ -1,5 +1,5 @@
 function createBats(){
-  bat = game.add.sprite(1000, 20, 'bat');
+  bat = game.add.sprite(6000, 20, 'bat');
   bat.visible = false;
   bat.animations.add('fly');
   bat.animations.play('fly', 10, true);
