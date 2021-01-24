@@ -120,8 +120,8 @@ var defaultConfig= {
 };
 
 function create(){
-//  game.input.onDown.addOnce(startBgmusic, this);
-  startCharacterSelection();
+ game.input.onDown.addOnce(startBgmusic, this);
+  // startCharacterSelection();
 }
 function startBgmusic(){
   bgmusic = game.add.audio('loading_audio');
@@ -244,7 +244,6 @@ function restartGame()
 {
   defeat.kill();
   restartText.kill();
-    console.log('-------- restart game -----');
   if(selected_music)
     selected_music.stop();
 
