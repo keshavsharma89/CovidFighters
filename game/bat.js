@@ -3,7 +3,7 @@ function createBats(){
   bat.enableBody=true;
   for (var i = 1; i <= 1; i++)
   {
-      var b = bat.create(i*6000, 20, 'bat', 0);
+      var b = bat.create(i*8000, 20, 'bat', 0);
       b.body.allowGravity=false;
   }
   bat.callAll('animations.add', 'animations', 'fly', [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], 15, true);
@@ -26,5 +26,5 @@ function spitCoronaVirus () {
       game.physics.arcade.moveToObject(coronavirus, player, 200);
     }
   });
-  firingTimer = game.time.now + 1000;
+  firingTimer = game.time.now + 400;
 }
