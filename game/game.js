@@ -44,6 +44,7 @@ var borderSprite ;
 var bgSprite;
 var barSprite ;
 var health_status;
+var start_boss_Level= true;
 var is_player_killed= true;
 var is_player_won= true;
 var totalHealth = 500;
@@ -114,6 +115,7 @@ function preload() {
     game.load.audio('covid_kil_sound', '../assets/SoundEffects/covidKil.wav');
     game.load.audio('crona_hit', '../assets/SoundEffects/FastPunch.mp3');
     game.load.audio('gameBG', '../assets/audio/gameBG_1.mp3');
+    game.load.audio('boss_Level_music', '../assets/audio/boss_Level_music.mp3');
     game.load.image('vaccine', '../assets/vaccine.png');
     game.load.image('coronavirus', '../assets/coronavirus.png');
     game.load.image('restart_text', '../assets/restart_text.png');
@@ -124,8 +126,8 @@ function preload() {
 }
 
 function create(){
- game.input.onDown.addOnce(startBgmusic, this);
-  //startCharacterSelection();
+ // game.input.onDown.addOnce(startBgmusic, this);
+  startCharacterSelection();
   //startGame();
 }
 function startBgmusic(){
@@ -489,6 +491,15 @@ function update() {
     if(player.x>5000){
       bat.visible = true;
       bat.x -= 1;
+
+      if(start_boss_Level){
+        gameBG.stop();
+        boss_Level_music = game.add.audio('boss_Level_music');
+        boss_Level_music.play();
+        start_boss_Level=false;
+      }
+
+
     }
     if(player.x>6300){
       if(player.body)
