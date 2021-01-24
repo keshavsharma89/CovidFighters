@@ -113,7 +113,7 @@ function preload() {
     game.load.audio('sanitizer_sound', '../assets/SoundEffects/sanitizer.wav');
     game.load.audio('covid_kil_sound', '../assets/SoundEffects/covidKil.wav');
     game.load.audio('crona_hit', '../assets/SoundEffects/FastPunch.mp3');
-    game.load.audio('gameBG', '../assets/audio/gameBG.mp3');
+    game.load.audio('gameBG', '../assets/audio/gameBG_1.mp3');
     game.load.image('vaccine', '../assets/vaccine.png');
     game.load.image('coronavirus', '../assets/coronavirus.png');
     game.load.image('restart_text', '../assets/restart_text.png');
