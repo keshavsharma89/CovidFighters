@@ -19,11 +19,25 @@ function preload() {
     game.load.atlasJSONHash('bat', '../assets/bat.png', '../assets/bat.json');
     game.load.image('spray', '../assets/spray.png');
     game.load.audio('spraySound', '../assets/SoundEffects/spray-sound.mp3');
+    game.load.audio('fall_die_Sound', '../assets/SoundEffects/fallAndDie.wav');
+    game.load.audio('won_music', '../assets/SoundEffects/won_music.wav');
+    game.load.audio('selectCharacter_background_music', '../assets/audio/selectChar.mp3');
+    game.load.audio('selected_music', '../assets/SoundEffects/selected.wav');
+    game.load.audio('vaccine_sound', '../assets/SoundEffects/vaccine.wav');
+    game.load.audio('sanitizer_sound', '../assets/SoundEffects/sanitizer.wav');
+    game.load.audio('covid_kil_sound', '../assets/SoundEffects/covidKil.wav');
+    game.load.audio('crona_hit', '../assets/SoundEffects/cronaHit.wav');
+    game.load.audio('gameBG', '../assets/audio/gameBG.mp3');
     game.load.image('vaccine', '../assets/vaccine.png');
     game.load.image('coronavirus', '../assets/coronavirus.png');
     game.load.atlasJSONHash('biden_win', '../assets/biden_win.png', '../assets/biden_win.json');
     game.load.atlasJSONHash('modi_win', '../assets/modi_win.png', '../assets/modi_win.json');
     game.load.atlasJSONHash('defeat', '../assets/defeat.png', '../assets/defeat.json');
+
+
+
+
+
 }
 var winner_image;
 var defeat;
@@ -45,6 +59,15 @@ var biden_image;
 var biden_label;
 var modi_image;
 var modi_label;
+var selectCharacter_background_music;
+var selected_music;
+var fall_die_Sound;
+var won_music;
+var vaccine_sound;
+var sanitizer_sound;
+var covid_kil_sound;
+var crona_hit;
+var gameBG;
 var select_avatar;
 var spraySound;
 var selectPlayerBackground;
@@ -53,6 +76,8 @@ var borderSprite ;
 var bgSprite;
 var barSprite ;
 var health_status;
+var is_player_killed= true;
+var is_player_won= true;
 var totalHealth = 500;
 var currentHealth = 500;
 var shield;
@@ -98,17 +123,24 @@ function create(){
   modi_image.animations.play('dance_modi', 7, true);
   //startGame();
   biden_image.events.onInputDown.add(selectCharacter);
-  modi_image.events.onInputDown.add(selectCharacter);
-
-
   game.physics.arcade.enable(biden_image);
+
+  modi_image.events.onInputDown.add(selectCharacter);
   game.physics.arcade.enable(modi_image);
+
+  selectCharacter_background_music = game.add.audio('selectCharacter_background_music');
+  selectCharacter_background_music.play();
+
+
 
 }
 
 
 function selectCharacter(item, pointer)
 {
+    selected_music = game.add.audio('selected_music');
+    selected_music.play();
+
     this.selectedCharacter = item.key;
     this.select_avatar.kill();
     this.start_game = game.add.sprite((game.width /2)+40, game.height-100, 'start_game');
@@ -227,9 +259,25 @@ function createProtectionBar()
   });
 }
 
+
 function startGame(item, pointer) {
-    if(this.selectPlayerBackground)
-    {this.selectPlayerBackground.kill();}
+
+    selected_music = game.add.audio('selected_music');
+    selected_music.play();
+
+    game.time.events.add(Phaser.Timer.SECOND * 1, startGameBG, this);
+
+
+
+    if(this.selectPlayerBackground){
+      this.selectPlayerBackground.kill();
+    }
+    selectCharacter_background_music.stop();
+
+
+
+
+
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.tileSprite(0, 0, 7000, 500 , 'backgroung');
@@ -238,14 +286,12 @@ function startGame(item, pointer) {
 
     game.physics.arcade.gravity.y = 200;
 
-    if(this.selectedCharacter == 'biden')
-    {
+    if(this.selectedCharacter == 'biden'){
       player = game.add.sprite(100, 350, 'biden_avatar');
       winner_image = game.add.sprite(6500, 150, 'biden_win');
       winner_image.animations.add('win');
       winner_image.animations.play('win', 10, true);
-    }else
-    {
+    }else{
       player = game.add.sprite(100, 350, 'modi_avatar');
       winner_image = game.add.sprite(6500, 150, 'modi_win');
       winner_image.animations.add('win');
@@ -288,6 +334,11 @@ function startGame(item, pointer) {
     doSpray();
 }
 
+function startGameBG() {
+  gameBG = game.add.audio('gameBG');
+  gameBG.play();
+}
+
 function createSanitizers(){
   sanitizer = game.add.group();
   sanitizer.enableBody = true;
@@ -322,11 +373,24 @@ function update() {
     if(player.x>7000){
       player.kill();
       winner_image.visible = true;
+
+      if(is_player_won){
+        won_music = game.add.audio('won_music');
+        won_music.play();
+        is_player_won= false;
+      }
     }
     if(currentHealth == 0 ){
+      // gameBG.stop();
       defeat.x = player.x;
       defeat.visible = true;
       player.body.collideWorldBounds = false;
+      if(is_player_killed){
+        fall_die_Sound = game.add.audio('fall_die_Sound');
+        fall_die_Sound.play();
+        is_player_killed= false;
+      }
+
     }
     player.body.velocity.x = 0;
     bat.x -= 1;
@@ -391,6 +455,10 @@ function update() {
 
 }
 function vaccineCollisionHandler(player, vaccine){
+  vaccine_sound = game.add.audio('vaccine_sound');
+  vaccine_sound.play();
+
+
   vaccine.kill();
   currentHealth = currentHealth + 100;
   if(currentHealth > 500) currentHealth = 500;
@@ -412,11 +480,14 @@ function collisionHandler (spray, covid){
     //  When a bullet hits an alien we kill them both
     spray.kill();
     covid.kill();
+    covid_kil_sound = game.add.audio('covid_kil_sound');
+    covid_kil_sound.play();
 }
 
-function playerCoronaCollisionHandler(player, covid)
-{
+function playerCoronaCollisionHandler(player, covid){
   if(!immune){
+    crona_hit = game.add.audio('crona_hit');
+    crona_hit.play();
     currentHealth = currentHealth - 200;
     if(currentHealth < 0) currentHealth = 0;
     setPercent(currentHealth);
@@ -424,6 +495,9 @@ function playerCoronaCollisionHandler(player, covid)
     if(currentHealth < 250) {
          setBarColor('#fc9802');
     }
+  }else{
+    covid_kil_sound = game.add.audio('covid_kil_sound');
+    covid_kil_sound.play();
   }
   covid.kill();
 }
@@ -477,6 +551,10 @@ function hexToRgb(hex) {
 }
 
 function sanitizerCollisionHandler (player, sanitizer ) {
+    sanitizer_sound = game.add.audio('sanitizer_sound');
+    sanitizer_sound.play();
+
+
     //  When a powerUp hits player we change bullet
     sanitizer.kill();
     //powerGain.play();
