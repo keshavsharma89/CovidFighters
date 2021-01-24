@@ -304,11 +304,12 @@ function startGame(item, pointer) {
     defeat.visible = false;
     covid = game.add.group();
     covid.enableBody = true;
-    for (var i = 1; i < 10; i++)
+    for (var i = 1; i < 9; i++)
     {
-        var c = covid.create(i*900, 390, 'covid');
-        c.body.setCircle(45);
+        var c = covid.create(i*900, 420, 'covid');
+        c.body.setCircle(40);
         c.body.allowGravity = false;
+        game.add.tween(c).to({ x: c.x + 100 }, 1000, Phaser.Easing.Linear.In, true, 0, 500, true);
     }
     createBats();
     createCoronaVirus();
@@ -385,12 +386,13 @@ function update() {
       defeat.x = player.x;
       defeat.visible = true;
       player.body.collideWorldBounds = false;
+
       if(is_player_killed){
         fall_die_Sound = game.add.audio('fall_die_Sound');
         fall_die_Sound.play();
         is_player_killed= false;
       }
-
+      player.kill();
     }
     player.body.velocity.x = 0;
     bat.x -= 1;
