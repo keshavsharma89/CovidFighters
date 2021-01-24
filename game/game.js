@@ -38,6 +38,7 @@ function preload() {
     game.load.audio('gameBG', '../assets/audio/gameBG.mp3');
     game.load.image('vaccine', '../assets/vaccine.png');
     game.load.image('coronavirus', '../assets/coronavirus.png');
+    game.load.image('restart_text', '../assets/restart_text.png');
     game.load.atlasJSONHash('biden_win', '../assets/biden_win.png', '../assets/biden_win.json');
     game.load.atlasJSONHash('modi_win', '../assets/modi_win.png', '../assets/modi_win.json');
     game.load.atlasJSONHash('defeat', '../assets/defeat.png', '../assets/defeat.json');
@@ -92,6 +93,9 @@ var totalHealth = 500;
 var currentHealth = 500;
 var shield;
 var immune = false;
+var restartText;
+var shieldBarSprite;
+var shieldTween ;
 var defaultConfig= {
     width: 250,
     height: 15,
@@ -116,7 +120,7 @@ var defaultConfig= {
 };
 
 function create(){
-  game.input.onDown.addOnce(startBgmusic, this);
+//  game.input.onDown.addOnce(startBgmusic, this);
   startCharacterSelection();
 }
 function startBgmusic(){
@@ -175,8 +179,11 @@ function oneSecPause(){
 }
 function startCharacterSelection(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
+  if(bgmusic)
+    bgmusic.stop();
 
-  covidFightersText.kill();
+  if(covidFightersText)
+    covidFightersText.kill();
   selectPlayerBackground = game.add.tileSprite(0, 0, 1320, 600 , 'avatar_bg');
   select_avatar = game.add.sprite((game.width /2)-150, 50, 'avatar_select');
   biden_image = game.add.sprite((game.width /2)-200, 150, 'biden');
@@ -233,6 +240,38 @@ function selectCharacter(item, pointer)
     }
 }
 
+function restartGame()
+{
+  defeat.kill();
+  restartText.kill();
+    console.log('-------- restart game -----');
+  if(selected_music)
+    selected_music.stop();
+
+  if(player)
+    player.kill();
+
+  if(sanitizer)
+    sanitizer.kill();
+
+  if(vaccine)
+    vaccine.kill();
+
+  if(bat)
+    bat.kill();
+
+  if(coronaGroup)
+    coronaGroup.kill();
+
+  if(covid)
+    covid.kill();
+
+  if(selectPlayerBackground){
+    selectPlayerBackground.kill();
+  }
+
+  startCharacterSelection();
+}
 function createHealthBar()
 {
 
@@ -278,6 +317,7 @@ function createHealthBar()
 
 function createProtectionBar()
 {
+  immune = true;
 	var shield_label = this.game.add.text(40, 80, 'Player Shield', { font: '20px Arial', fill: '#0ad4fc' })
   shield_label.fixedToCamera= true;
 
@@ -309,15 +349,16 @@ function createProtectionBar()
   bmdw.ctx.fill();
   bmdw.update();
 
-  var shieldBarSprite = this.game.add.sprite(defaultConfig.x, defaultConfig.y+80, bmdw);
+  shieldBarSprite = this.game.add.sprite(defaultConfig.x, defaultConfig.y+80, bmdw);
   shieldBarSprite.fixedToCamera= true;
-    immune = true;
 
-  var shieldTween  = this.game.add.tween(shieldBarSprite).to( { width: 0 }, 5000, Phaser.Easing.Linear.None, true);
-  shieldTween.onComplete.add(function(){shieldBarSprite.kill();
-  shieldBgSprite.kill();
-  shieldBorderSprite.kill();
-  shield_label.kill();
+
+  shieldTween  = this.game.add.tween(shieldBarSprite).to( { width: 0 }, 6000, Phaser.Easing.Linear.None, true);
+  shieldTween.onComplete.add(function(){
+    shieldBarSprite.kill();
+    shieldBgSprite.kill();
+    shieldBorderSprite.kill();
+    shield_label.kill();
     immune = false;
   });
 }
@@ -332,8 +373,13 @@ function startGame(item, pointer) {
 
 
 
+<<<<<<< HEAD
     if(this.selectPlayerBackground){
       this.selectPlayerBackground.kill();
+=======
+    if(selectPlayerBackground){
+      selectPlayerBackground.kill();
+>>>>>>> 7bc37efb0af670443ec7b12e33ba06408cb83374
     }
     selectCharacter_background_music.stop();
 
@@ -351,20 +397,37 @@ function startGame(item, pointer) {
 
     if(this.selectedCharacter == 'biden'){
       player = game.add.sprite(100, 350, 'biden_avatar');
-      winner_image = game.add.sprite(6500, 150, 'biden_win');
+      winner_image = game.add.sprite(400, 100, 'biden_win');
       winner_image.animations.add('win');
       winner_image.animations.play('win', 10, true);
     }else{
       player = game.add.sprite(100, 350, 'modi_avatar');
-      winner_image = game.add.sprite(6500, 150, 'modi_win');
+      winner_image = game.add.sprite(400, 100, 'modi_win');
       winner_image.animations.add('win');
       winner_image.animations.play('win', 10, true);
     }
     winner_image.visible = false;
-    defeat = game.add.sprite(1000, 150, 'defeat');
+    winner_image.fixedToCamera = true;
+
+    defeat = game.add.sprite(400, 100, 'defeat');
     defeat.animations.add('lose');
     defeat.animations.play('lose', 10, true);
     defeat.visible = false;
+<<<<<<< HEAD
+=======
+    defeat.fixedToCamera = true;
+    defeat.inputEnabled = true;
+    defeat.events.onInputDown.add(restartGame);
+
+    restartText = game.add.sprite(350, 430, 'restart_text');
+    restartText.visible = false;
+    restartText.fixedToCamera = true;
+    restartText.inputEnabled = true;
+    restartText.events.onInputDown.add(restartGame);
+
+
+    win_flag = game.add.sprite(6300, 250, 'win_flag');
+>>>>>>> 7bc37efb0af670443ec7b12e33ba06408cb83374
     covid = game.add.group();
     covid.enableBody = true;
     for (var i = 1; i < 9; i++)
@@ -445,10 +508,16 @@ function update() {
       }
     }
     if(currentHealth == 0 ){
-      // gameBG.stop();
-      defeat.x = player.x;
-      defeat.visible = true;
+
       player.body.collideWorldBounds = false;
+
+      sanitizer.kill();
+      vaccine.kill();
+      bat.kill();
+      coronaGroup.kill();
+      covid.kill();
+
+  //    game.add.tween(defeat.scale).to( { x: 1.2, y: 1.2 }, 1000, Phaser.Easing.Elastic.Out, true);
 
       if(is_player_killed){
         fall_die_Sound = game.add.audio('fall_die_Sound');
@@ -456,7 +525,16 @@ function update() {
         is_player_killed= false;
       }
       player.kill();
-    }
+      defeat.visible = true;
+      restartText.visible = true;
+      defeat.scale.set(1.2);
+      //if(defeat.visible)
+
+
+      //if(restartText.visible)
+        restartText.events.onInputDown.add(startCharacterSelection);
+
+  }
     player.body.velocity.x = 0;
     bat.x -= 1;
       if (cursors.left.isDown)
@@ -534,10 +612,6 @@ function vaccineCollisionHandler(player, vaccine){
   }
 
 createProtectionBar();
-//  shield = game.time.events.loop(Phaser.Timer.SECOND * 1, protection, this);
-
-//  game.time.events.add(Phaser.Timer.SECOND * 6, removeProtection, this);
-
 }
 
 
