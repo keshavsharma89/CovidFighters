@@ -27,7 +27,7 @@ function preload() {
     game.load.atlasJSONHash('bat', '../assets/bat.png', '../assets/bat.json');
     game.load.image('spray', '../assets/spray.png');
     game.load.audio('spraySound', '../assets/SoundEffects/spray-sound.mp3');
-    game.load.audio('fall_die_Sound', '../assets/SoundEffects/fallAndDie.wav');
+    game.load.audio('fall_die_Sound', '../assets/SoundEffects/fallAndDie.mp3');
     game.load.audio('won_music', '../assets/SoundEffects/won_music.wav');
     game.load.audio('selectCharacter_background_music', '../assets/audio/selectChar.mp3');
     game.load.audio('selected_music', '../assets/SoundEffects/selected.wav');
@@ -41,10 +41,9 @@ function preload() {
     game.load.atlasJSONHash('biden_win', '../assets/biden_win.png', '../assets/biden_win.json');
     game.load.atlasJSONHash('modi_win', '../assets/modi_win.png', '../assets/modi_win.json');
     game.load.atlasJSONHash('defeat', '../assets/defeat.png', '../assets/defeat.json');
-    game.load.image('win_flag', '../assets/win_flag.png');
+
 }
 var bgmusic;
-var win_flag;
 var joeBidenText;
 var biden_loading_image;
 var narendraModiText
@@ -167,12 +166,16 @@ function showTitle(){
   covidFightersText.animations.add('covid_Fighters_Text');
   covidFightersText.scale.setTo(1.3);
   covidFightersText.animations.play('covid_Fighters_Text', 10, true);
-  game.time.events.add(Phaser.Timer.SECOND * 5, startCharacterSelection, this);
+  game.time.events.add(Phaser.Timer.SECOND * 8.75, oneSecPause, this);
 }
 
+function oneSecPause(){
+  bgmusic.stop();
+  game.time.events.add(Phaser.Timer.SECOND * 1, startCharacterSelection, this);
+}
 function startCharacterSelection(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
-  bgmusic.stop();
+
   covidFightersText.kill();
   selectPlayerBackground = game.add.tileSprite(0, 0, 1320, 600 , 'avatar_bg');
   select_avatar = game.add.sprite((game.width /2)-150, 50, 'avatar_select');
@@ -326,10 +329,18 @@ function startGame(item, pointer) {
     selected_music.play();
 
     game.time.events.add(Phaser.Timer.SECOND * 1, startGameBG, this);
+
+
+
     if(this.selectPlayerBackground){
       this.selectPlayerBackground.kill();
     }
     selectCharacter_background_music.stop();
+
+
+
+
+
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.tileSprite(0, 0, 7000, 500 , 'backgroung');
@@ -354,8 +365,6 @@ function startGame(item, pointer) {
     defeat.animations.add('lose');
     defeat.animations.play('lose', 10, true);
     defeat.visible = false;
-
-    win_flag = game.add.sprite(6300, 250, 'win_flag');
     covid = game.add.group();
     covid.enableBody = true;
     for (var i = 1; i < 9; i++)
