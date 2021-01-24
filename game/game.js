@@ -120,7 +120,7 @@ var defaultConfig= {
 };
 
 function create(){
-  game.input.onDown.addOnce(startBgmusic, this);
+//  game.input.onDown.addOnce(startBgmusic, this);
   startCharacterSelection();
 }
 function startBgmusic(){
@@ -175,8 +175,11 @@ function showTitle(){
 
 function startCharacterSelection(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
-  bgmusic.stop();
-  covidFightersText.kill();
+  if(bgmusic)
+    bgmusic.stop();
+
+  if(covidFightersText)
+    covidFightersText.kill();
   selectPlayerBackground = game.add.tileSprite(0, 0, 1320, 600 , 'avatar_bg');
   select_avatar = game.add.sprite((game.width /2)-150, 50, 'avatar_select');
   biden_image = game.add.sprite((game.width /2)-200, 150, 'biden');
@@ -233,6 +236,38 @@ function selectCharacter(item, pointer)
     }
 }
 
+function restartGame()
+{
+  defeat.kill();
+  restartText.kill();
+    console.log('-------- restart game -----');
+  if(selected_music)
+    selected_music.stop();
+
+  if(player)
+    player.kill();
+
+  if(sanitizer)
+    sanitizer.kill();
+
+  if(vaccine)
+    vaccine.kill();
+
+  if(bat)
+    bat.kill();
+
+  if(coronaGroup)
+    coronaGroup.kill();
+
+  if(covid)
+    covid.kill();
+
+  if(selectPlayerBackground){
+    selectPlayerBackground.kill();
+  }
+
+  startCharacterSelection();
+}
 function createHealthBar()
 {
 
@@ -279,11 +314,6 @@ function createHealthBar()
 function createProtectionBar()
 {
   immune = true;
-  if(shieldTween)
-  {
-    shieldTween.kill();
-  }
-
 	var shield_label = this.game.add.text(40, 80, 'Player Shield', { font: '20px Arial', fill: '#0ad4fc' })
   shield_label.fixedToCamera= true;
 
@@ -339,8 +369,8 @@ function startGame(item, pointer) {
 
 
 
-    if(this.selectPlayerBackground){
-      this.selectPlayerBackground.kill();
+    if(selectPlayerBackground){
+      selectPlayerBackground.kill();
     }
     selectCharacter_background_music.stop();
 
@@ -375,10 +405,14 @@ function startGame(item, pointer) {
     defeat.animations.play('lose', 10, true);
     defeat.visible = false;
     defeat.fixedToCamera = true;
+    defeat.inputEnabled = true;
+    defeat.events.onInputDown.add(restartGame);
 
     restartText = game.add.sprite(350, 430, 'restart_text');
     restartText.visible = false;
     restartText.fixedToCamera = true;
+    restartText.inputEnabled = true;
+    restartText.events.onInputDown.add(restartGame);
 
     covid = game.add.group();
     covid.enableBody = true;
@@ -460,12 +494,14 @@ function update() {
       }
     }
     if(currentHealth == 0 ){
-      defeat.visible = true;
-      restartText.visible = true;
+
       player.body.collideWorldBounds = false;
 
       sanitizer.kill();
       vaccine.kill();
+      bat.kill();
+      coronaGroup.kill();
+      covid.kill();
 
   //    game.add.tween(defeat.scale).to( { x: 1.2, y: 1.2 }, 1000, Phaser.Easing.Elastic.Out, true);
 
@@ -475,8 +511,16 @@ function update() {
         is_player_killed= false;
       }
       player.kill();
-        defeat.scale.set(1.2);
-    }
+      defeat.visible = true;
+      restartText.visible = true;
+      defeat.scale.set(1.2);
+      //if(defeat.visible)
+
+
+      //if(restartText.visible)
+        restartText.events.onInputDown.add(startCharacterSelection);
+
+  }
     player.body.velocity.x = 0;
     bat.x -= 1;
       if (cursors.left.isDown)
