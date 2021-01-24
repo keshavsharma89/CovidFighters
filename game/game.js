@@ -126,6 +126,7 @@ function preload() {
 function create(){
  game.input.onDown.addOnce(startBgmusic, this);
   //startCharacterSelection();
+  //startGame();
 }
 function startBgmusic(){
   bgmusic = game.add.audio('loading_audio');
@@ -281,7 +282,6 @@ function restartGame()
 function createHealthBar()
 {
 
-
 	health_label = this.game.add.text(40, 10, 'Player Health', { font: '20px Arial', fill: '#53fc0a' })
   health_label.fixedToCamera= true;
 
@@ -377,18 +377,12 @@ function startGame(item, pointer) {
 
     game.time.events.add(Phaser.Timer.SECOND * 1, startGameBG, this);
 
-
-
-
     if(selectPlayerBackground){
       selectPlayerBackground.kill();
 
     }
-    selectCharacter_background_music.stop();
-
-
-
-
+    if(selectCharacter_background_music)
+      selectCharacter_background_music.stop();
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -472,9 +466,9 @@ function startGameBG() {
 function createSanitizers(){
   sanitizer = game.add.group();
   sanitizer.enableBody = true;
-  for (var i = 1; i < 5; i++)
+  for (var i = 1; i < 3; i++)
   {
-      var s = sanitizer.create(i*600, 150, 'sanitizer');
+      var s = sanitizer.create(i*450, 150, 'sanitizer');
       s.body.allowGravity = false;
   }
 }
@@ -482,9 +476,9 @@ function createSanitizers(){
 function createVaccine(){
   vaccine = game.add.group();
   vaccine.enableBody = true;
-  for (var i = 1; i < 7; i++)
+  for (var i = 1; i < 6; i++)
   {
-      var s = vaccine.create(i*900, 150, 'vaccine');
+      var s = vaccine.create(i*1137, 150, 'vaccine');
       s.body.allowGravity = false;
   }
 }
@@ -492,6 +486,10 @@ function createVaccine(){
 function update() {
   if(player)
   {
+    if(player.x>5000){
+      bat.visible = true;
+      bat.x -= 1;
+    }
     if(player.x>6300){
       if(player.body)
       {player.body.allowGravity = false;
@@ -547,7 +545,6 @@ function update() {
   }
     if(player.body)
       player.body.velocity.x = 0;
-    bat.x -= 1;
       if (cursors.left.isDown)
       {
           if(player.body)
@@ -606,6 +603,7 @@ function update() {
       game.physics.arcade.overlap(sanitizer, player, sanitizerCollisionHandler, null, this);
       game.physics.arcade.overlap(vaccine, player, vaccineCollisionHandler, null, this);
       game.physics.arcade.collide(spray.bullets, covid, collisionHandler);
+      game.physics.arcade.collide(spray.bullets, coronaGroup, collisionHandler);
       game.physics.arcade.collide(player, covid, playerCoronaCollisionHandler);
       game.physics.arcade.collide(player, coronaGroup, playerCoronaCollisionHandler);
   }

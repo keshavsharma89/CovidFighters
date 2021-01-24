@@ -1,13 +1,8 @@
 function createBats(){
-  bat = game.add.group();
-  bat.enableBody=true;
-  for (var i = 1; i <= 1; i++)
-  {
-      var b = bat.create(i*8000, 20, 'bat', 0);
-      b.body.allowGravity=false;
-  }
-  bat.callAll('animations.add', 'animations', 'fly', [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], 15, true);
-  bat.callAll('play', null, 'fly');
+  bat = game.add.sprite(1000, 20, 'bat');
+  bat.visible = false;
+  bat.animations.add('fly');
+  bat.animations.play('fly', 10, true);
 }
 
 function createCoronaVirus(){
@@ -20,11 +15,9 @@ function createCoronaVirus(){
 }
 function spitCoronaVirus () {
   coronavirus = coronaGroup.getFirstExists(false);
-  bat.forEachAlive(function(b){
-    if(coronavirus){
-      coronavirus.reset(b.body.x - 30, b.body.y + 100);
+  if(coronavirus){
+      coronavirus.reset(bat.x - 30, bat.y + 100);
       game.physics.arcade.moveToObject(coronavirus, player, 200);
-    }
-  });
+  }
   firingTimer = game.time.now + 1000;
 }
