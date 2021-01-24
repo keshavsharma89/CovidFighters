@@ -484,7 +484,7 @@ function createVaccine(){
   vaccine.enableBody = true;
   for (var i = 1; i < 7; i++)
   {
-      var s = vaccine.create(i*900, 150, 'vaccine');
+      var s = vaccine.create(i*1200, 150, 'vaccine');
       s.body.allowGravity = false;
   }
 }
