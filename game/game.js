@@ -42,9 +42,11 @@ function preload() {
     game.load.atlasJSONHash('biden_win', '../assets/biden_win.png', '../assets/biden_win.json');
     game.load.atlasJSONHash('modi_win', '../assets/modi_win.png', '../assets/modi_win.json');
     game.load.atlasJSONHash('defeat', '../assets/defeat.png', '../assets/defeat.json');
-
+    game.load.image('win_flag', '../assets/win_flag.png');
 }
 var bgmusic;
+var player_died_timer = 0;
+var win_flag;
 var joeBidenText;
 var biden_loading_image;
 var narendraModiText
@@ -121,7 +123,7 @@ var defaultConfig= {
 
 function create(){
  game.input.onDown.addOnce(startBgmusic, this);
-  // startCharacterSelection();
+  //startCharacterSelection();
 }
 function startBgmusic(){
   bgmusic = game.add.audio('loading_audio');
@@ -474,7 +476,7 @@ function createSanitizers(){
 function createVaccine(){
   vaccine = game.add.group();
   vaccine.enableBody = true;
-  for (var i = 1; i < 5; i++)
+  for (var i = 1; i < 7; i++)
   {
       var s = vaccine.create(i*900, 150, 'vaccine');
       s.body.allowGravity = false;
@@ -491,10 +493,12 @@ function update() {
       player.body.velocity.x = 350;
       player.animations.play('right');
       player.x += 5;
+
     }
     if(player.x>7000){
       player.kill();
       winner_image.visible = true;
+      win_flag.kill();
 
       if(is_player_won){
         won_music = game.add.audio('won_music');
@@ -518,7 +522,10 @@ function update() {
         fall_die_Sound = game.add.audio('fall_die_Sound');
         fall_die_Sound.play();
         is_player_killed= false;
+        player_died_timer = game.time.now + 1000;
       }
+    }
+    if(currentHealth == 0 && game.time.now > player_died_timer){
       player.kill();
       defeat.visible = true;
       restartText.visible = true;
@@ -596,7 +603,6 @@ function vaccineCollisionHandler(player, vaccine){
   vaccine_sound = game.add.audio('vaccine_sound');
   vaccine_sound.play();
 
-
   vaccine.kill();
   currentHealth = currentHealth + 100;
   if(currentHealth > 500) currentHealth = 500;
@@ -622,7 +628,7 @@ function playerCoronaCollisionHandler(player, covid){
   if(!immune){
     crona_hit = game.add.audio('crona_hit');
     crona_hit.play();
-    currentHealth = currentHealth - 200;
+    currentHealth = currentHealth - 50;
     if(currentHealth < 0) currentHealth = 0;
     setPercent(currentHealth);
 
