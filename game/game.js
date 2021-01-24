@@ -1,6 +1,14 @@
-var game = new Phaser.Game(1340, 550, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(1340, 550, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
+    //game loading stuff
+    game.load.audio('loading_audio', '../assets/audio/entry_music.mp3');
+    game.load.atlasJSONHash('covidFightersText', '../assets/CovidFightersTxt.png', '../assets/CovidFightersTxt.json');
+    game.load.atlasJSONHash('narendraModiText', '../assets/NarendraModiText.png', '../assets/NarendraModiText.json');
+    game.load.atlasJSONHash('joeBidenText', '../assets/JoeBidenText.png', '../assets/JoeBidenText.json');
+    game.load.atlasJSONHash('modiEntry', '../assets/modiEntry.png', '../assets/modiEntry.json');
+    game.load.atlasJSONHash('bidenEntry', '../assets/bidenEntry.png', '../assets/bidenEntry.json');
+
     //preload for player selection starts
     game.load.atlasJSONHash('biden', '../assets/biden_spritesheet.png', '../assets/biden_spritesheet.json');
     game.load.atlasJSONHash('modi', '../assets/modi_spritesheet.png', '../assets/modi_spritesheet.json');
@@ -34,11 +42,13 @@ function preload() {
     game.load.atlasJSONHash('modi_win', '../assets/modi_win.png', '../assets/modi_win.json');
     game.load.atlasJSONHash('defeat', '../assets/defeat.png', '../assets/defeat.json');
 
-
-
-
-
 }
+var bgmusic;
+var joeBidenText;
+var biden_loading_image;
+var narendraModiText
+var modi_loading_image;
+var covidFightersText;
 var winner_image;
 var defeat;
 var cursors;
@@ -106,8 +116,63 @@ var defaultConfig= {
 };
 
 function create(){
+  game.input.onDown.addOnce(startBgmusic, this);
+  startCharacterSelection();
+}
+function startBgmusic(){
+  bgmusic = game.add.audio('loading_audio');
+  bgmusic.play();
+  game.time.events.add(Phaser.Timer.SECOND * 4, startBiden, this);
+}
+function startBiden(){
+  joeBidenText = game.add.sprite( 400, 200, 'joeBidenText');
+  joeBidenText.animations.add('joe_Biden_Text');
+  joeBidenText.animations.play('joe_Biden_Text', 10, true);
 
+  game.time.events.add(Phaser.Timer.SECOND * 2, startBidenEntry, this);
+}
+
+function startBidenEntry(){
+  joeBidenText.kill();
+  biden_loading_image = game.add.sprite( 150, 10, 'bidenEntry');
+  biden_loading_image.animations.add('load_biden');
+  biden_loading_image.scale.setTo(1.7);
+  biden_loading_image.animations.play('load_biden', 10, false);
+
+  game.time.events.add(Phaser.Timer.SECOND * 5, startModi, this);
+}
+
+function startModi(){
+  biden_loading_image.kill();
+
+  narendraModiText = game.add.sprite( 250, 220, 'narendraModiText');
+  narendraModiText.animations.add('narendra_ModiText');
+  narendraModiText.animations.play('narendra_ModiText', 10, true);
+  game.time.events.add(Phaser.Timer.SECOND * 2, startModiEntry, this);
+}
+
+function startModiEntry(){
+  narendraModiText.kill();
+  modi_loading_image = game.add.sprite( 200, 10, 'modiEntry');
+  modi_loading_image.animations.add('load_modi');
+  modi_loading_image.scale.setTo(1.7);
+  modi_loading_image.animations.play('load_modi', 7, false);
+  game.time.events.add(Phaser.Timer.SECOND * 7, showTitle, this);
+}
+
+function showTitle(){
+  modi_loading_image.kill();
+  covidFightersText = game.add.sprite(90, 220, 'covidFightersText');
+  covidFightersText.animations.add('covid_Fighters_Text');
+  covidFightersText.scale.setTo(1.3);
+  covidFightersText.animations.play('covid_Fighters_Text', 10, true);
+  game.time.events.add(Phaser.Timer.SECOND * 5, startCharacterSelection, this);
+}
+
+function startCharacterSelection(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
+  bgmusic.stop();
+  covidFightersText.kill();
   selectPlayerBackground = game.add.tileSprite(0, 0, 1320, 600 , 'avatar_bg');
   select_avatar = game.add.sprite((game.width /2)-150, 50, 'avatar_select');
   biden_image = game.add.sprite((game.width /2)-200, 150, 'biden');
@@ -130,11 +195,7 @@ function create(){
 
   selectCharacter_background_music = game.add.audio('selectCharacter_background_music');
   selectCharacter_background_music.play();
-
-
-
 }
-
 
 function selectCharacter(item, pointer)
 {
@@ -213,8 +274,6 @@ function createHealthBar()
 
 function createProtectionBar()
 {
-
-
 	var shield_label = this.game.add.text(40, 80, 'Player Shield', { font: '20px Arial', fill: '#0ad4fc' })
   shield_label.fixedToCamera= true;
 
