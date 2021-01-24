@@ -34,7 +34,7 @@ function preload() {
     game.load.audio('vaccine_sound', '../assets/SoundEffects/vaccine.wav');
     game.load.audio('sanitizer_sound', '../assets/SoundEffects/sanitizer.wav');
     game.load.audio('covid_kil_sound', '../assets/SoundEffects/covidKil.wav');
-    game.load.audio('crona_hit', '../assets/SoundEffects/cronaHit.wav');
+    game.load.audio('crona_hit', '../assets/SoundEffects/FastPunch.mp3');
     game.load.audio('gameBG', '../assets/audio/gameBG.mp3');
     game.load.image('vaccine', '../assets/vaccine.png');
     game.load.image('coronavirus', '../assets/coronavirus.png');
@@ -42,9 +42,10 @@ function preload() {
     game.load.atlasJSONHash('biden_win', '../assets/biden_win.png', '../assets/biden_win.json');
     game.load.atlasJSONHash('modi_win', '../assets/modi_win.png', '../assets/modi_win.json');
     game.load.atlasJSONHash('defeat', '../assets/defeat.png', '../assets/defeat.json');
-
+    game.load.image('win_flag', '../assets/win_flag.png');
 }
 var bgmusic;
+var win_flag;
 var joeBidenText;
 var biden_loading_image;
 var narendraModiText
@@ -373,11 +374,6 @@ function startGame(item, pointer) {
       selectPlayerBackground.kill();
     }
     selectCharacter_background_music.stop();
-
-
-
-
-
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.tileSprite(0, 0, 7000, 500 , 'backgroung');
@@ -414,6 +410,8 @@ function startGame(item, pointer) {
     restartText.inputEnabled = true;
     restartText.events.onInputDown.add(restartGame);
 
+
+    win_flag = game.add.sprite(6300, 250, 'win_flag');
     covid = game.add.group();
     covid.enableBody = true;
     for (var i = 1; i < 9; i++)
