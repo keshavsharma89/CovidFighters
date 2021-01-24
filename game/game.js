@@ -1,5 +1,6 @@
 
 var bgmusic;
+var player_died_timer = 0;
 var win_flag;
 var joeBidenText;
 var biden_loading_image;
@@ -104,7 +105,7 @@ function preload() {
     game.load.atlasJSONHash('bat', '../assets/bat.png', '../assets/bat.json');
     game.load.image('spray', '../assets/spray.png');
     game.load.audio('spraySound', '../assets/SoundEffects/spray-sound.mp3');
-    game.load.audio('fall_die_Sound', '../assets/SoundEffects/fallAndDie.wav');
+    game.load.audio('fall_die_Sound', '../assets/SoundEffects/fallAndDie.mp3');
     game.load.audio('won_music', '../assets/SoundEffects/won_music.wav');
     game.load.audio('selectCharacter_background_music', '../assets/audio/selectChar.mp3');
     game.load.audio('selected_music', '../assets/SoundEffects/selected.wav');
@@ -123,8 +124,8 @@ function preload() {
 }
 
 function create(){
-//  game.input.onDown.addOnce(startBgmusic, this);
-  startCharacterSelection();
+ game.input.onDown.addOnce(startBgmusic, this);
+  //startCharacterSelection();
 }
 function startBgmusic(){
   bgmusic = game.add.audio('loading_audio');
@@ -173,9 +174,13 @@ function showTitle(){
   covidFightersText.animations.add('covid_Fighters_Text');
   covidFightersText.scale.setTo(1.3);
   covidFightersText.animations.play('covid_Fighters_Text', 10, true);
-  game.time.events.add(Phaser.Timer.SECOND * 5, startCharacterSelection, this);
+  game.time.events.add(Phaser.Timer.SECOND * 8.75, oneSecPause, this);
 }
 
+function oneSecPause(){
+  bgmusic.stop();
+  game.time.events.add(Phaser.Timer.SECOND * 1, startCharacterSelection, this);
+}
 function startCharacterSelection(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
   if(bgmusic)
@@ -374,10 +379,17 @@ function startGame(item, pointer) {
 
 
 
+
     if(selectPlayerBackground){
       selectPlayerBackground.kill();
+
     }
     selectCharacter_background_music.stop();
+
+
+
+
+
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.tileSprite(0, 0, 7000, 500 , 'backgroung');
@@ -404,6 +416,7 @@ function startGame(item, pointer) {
     defeat.animations.add('lose');
     defeat.animations.play('lose', 10, true);
     defeat.visible = false;
+
     defeat.fixedToCamera = true;
     defeat.inputEnabled = true;
     defeat.events.onInputDown.add(restartGame);
@@ -416,6 +429,7 @@ function startGame(item, pointer) {
 
 
     win_flag = game.add.sprite(6300, 250, 'win_flag');
+
     covid = game.add.group();
     covid.enableBody = true;
     for (var i = 1; i < 9; i++)
@@ -468,7 +482,7 @@ function createSanitizers(){
 function createVaccine(){
   vaccine = game.add.group();
   vaccine.enableBody = true;
-  for (var i = 1; i < 5; i++)
+  for (var i = 1; i < 7; i++)
   {
       var s = vaccine.create(i*900, 150, 'vaccine');
       s.body.allowGravity = false;
@@ -486,10 +500,12 @@ function update() {
       }
       player.animations.play('right');
       player.x += 5;
+
     }
     if(player.x>7000){
       player.kill();
       winner_image.visible = true;
+      win_flag.kill();
 
       if(is_player_won){
         won_music = game.add.audio('won_music');
@@ -514,7 +530,10 @@ function update() {
         fall_die_Sound = game.add.audio('fall_die_Sound');
         fall_die_Sound.play();
         is_player_killed= false;
+        player_died_timer = game.time.now + 1000;
       }
+    }
+    if(currentHealth == 0 && game.time.now > player_died_timer){
       player.kill();
       defeat.visible = true;
       restartText.visible = true;
@@ -595,7 +614,6 @@ function update() {
 function vaccineCollisionHandler(player, vaccine){
   vaccine_sound = game.add.audio('vaccine_sound');
   vaccine_sound.play();
-
 
   vaccine.kill();
   currentHealth = currentHealth + 100;

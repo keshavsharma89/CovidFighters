@@ -26,5 +26,5 @@ function spitCoronaVirus () {
       game.physics.arcade.moveToObject(coronavirus, player, 200);
     }
   });
-  firingTimer = game.time.now + 400;
+  firingTimer = game.time.now + 1000;
 }
