@@ -108,12 +108,12 @@ function preload() {
     game.load.audio('spraySound', '../assets/SoundEffects/spray-sound.mp3');
     game.load.audio('fall_die_Sound', '../assets/SoundEffects/fallAndDie.mp3');
     game.load.audio('won_music', '../assets/SoundEffects/won_music.wav');
-    game.load.audio('selectCharacter_background_music', '../assets/audio/selectChar.mp3');
+    game.load.audio('selectCharacter_background_music', '../assets/SoundEffects/select_player_music.mp3');
     game.load.audio('selected_music', '../assets/SoundEffects/selected.wav');
     game.load.audio('vaccine_sound', '../assets/SoundEffects/vaccine.wav');
     game.load.audio('sanitizer_sound', '../assets/SoundEffects/sanitizer.wav');
     game.load.audio('covid_kil_sound', '../assets/SoundEffects/covidKil.wav');
-    game.load.audio('crona_hit', '../assets/SoundEffects/FastPunch.mp3');
+    game.load.audio('crona_hit', '../assets/SoundEffects/corona_hit_player.mp3');
     game.load.audio('gameBG', '../assets/audio/gameBG_1.mp3');
     game.load.audio('boss_Level_music', '../assets/audio/boss_Level_music.mp3');
     game.load.image('vaccine', '../assets/vaccine.png');
@@ -126,6 +126,7 @@ function preload() {
 }
 
 function create(){
+
   introText = game.add.text(1000, 530,'Intro', { font: '30px Arial', fill: '#fff' });
   introText.anchor.setTo(0.5, 0.5);
   introText.inputEnabled = true;
@@ -188,6 +189,7 @@ function showTitle(){
   covidFightersText.animations.add('covid_Fighters_Text');
   covidFightersText.scale.setTo(1.3);
   covidFightersText.animations.play('covid_Fighters_Text', 10, true);
+
   game.time.events.add(Phaser.Timer.SECOND * 8.75, oneSecPause, this);
 }
 
@@ -340,7 +342,7 @@ function createProtectionBar()
   shieldBarSprite.fixedToCamera= true;
 
 
-  shieldTween  = this.game.add.tween(shieldBarSprite).to( { width: 0 }, 6000, Phaser.Easing.Linear.None, true);
+  shieldTween  = this.game.add.tween(shieldBarSprite).to( { width: 0 }, 4000, Phaser.Easing.Linear.None, true);
   shieldTween.onComplete.add(function(){
     shieldBarSprite.kill();
     shieldBgSprite.kill();
@@ -438,7 +440,7 @@ function startGameBG() {
 function createSanitizers(){
   sanitizer = game.add.group();
   sanitizer.enableBody = true;
-  for (var i = 1; i < 3; i++)
+  for (var i = 1; i < 2; i++)
   {
       var s = sanitizer.create(i*450, 150, 'sanitizer');
       s.body.allowGravity = false;
@@ -465,7 +467,7 @@ function update() {
       if(start_boss_Level){
         gameBG.stop();
         boss_Level_music = game.add.audio('boss_Level_music');
-        boss_Level_music.play();
+        boss_Level_music.loopFull();
         start_boss_Level=false;
       }
 
@@ -614,7 +616,7 @@ function playerCoronaCollisionHandler(player, covid){
   if(!immune){
     crona_hit = game.add.audio('crona_hit');
     crona_hit.play();
-    currentHealth = currentHealth - 50;
+    currentHealth = currentHealth - 100;
     if(currentHealth < 0) currentHealth = 0;
     setPercent(currentHealth);
 
@@ -681,8 +683,8 @@ function sanitizerCollisionHandler (player, sanitizer ) {
     sanitizer_sound.play();
     sanitizer.kill();
 
-    spray = game.add.weapon(10, 'spray');
-    doSpray();
+    //spray = game.add.weapon(10, 'spray');
+    //doSpray();
 }
 
 
